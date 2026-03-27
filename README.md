@@ -145,19 +145,18 @@ http://localhost:8000/docs
 📁 Project Structure
 
 env/
-email_env.py
-models.py
-tasks.py
-grader.py
+  email_env.py    # core environment
+  models.py       # typed schemas
+  tasks.py        # task generation
+  grader.py       # reward functions
 
 baseline/
-run_baseline.py
+  run_baseline.py
 
-app.py
+app.py            # FastAPI server
 Dockerfile
 openenv.yaml
 README.md
-
 ⸻
 
 🧩 OpenEnv Compliance
