@@ -1,0 +1,6 @@
+services:
+  emailopenenv:
+    image: emailopenenv
+    build:
+      context: .
+      dockerfile: ./Dockerfile
