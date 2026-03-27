@@ -4,7 +4,7 @@
 
 This project implements a real-world email triage environment following the OpenEnv specification.
 
-It simulates how AI agents manage incoming emails by:
+It simulates how AI agents manage incoming emails by:\n
 	•	Classifying emails (spam / complaint / work)
 	•	Extracting useful information
 	•	Generating replies
