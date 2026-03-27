@@ -5,7 +5,8 @@ class Email(BaseModel):
     id: int
     subject: str
     body: str
-    label: str  # ground truth
+    label: str
+    priority: str  # high, medium, low
 
 class Observation(BaseModel):
     emails: List[Email]

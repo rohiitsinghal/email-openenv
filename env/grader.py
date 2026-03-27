@@ -11,21 +11,21 @@ def grade_extraction(pred, truth):
 
 
 def grade_reply(reply, label):
-    score = 0.0
     reply = reply.lower()
+    score = 0.0
 
     if label == "complaint":
-        if "sorry" in reply:
+        if any(word in reply for word in ["sorry", "apologize"]):
             score += 0.5
-        if "refund" in reply:
+        if any(word in reply for word in ["refund", "process", "issue"]):
             score += 0.5
 
     elif label == "work":
-        if "schedule" in reply or "meeting" in reply:
+        if any(word in reply for word in ["meeting", "schedule", "confirm"]):
             score += 1.0
 
     elif label == "spam":
-        if "ignore" in reply or "spam" in reply:
+        if any(word in reply for word in ["ignore", "spam", "block"]):
             score += 1.0
 
     return min(score, 1.0)
