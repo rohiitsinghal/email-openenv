@@ -128,22 +128,31 @@ docker run -p 8000:8000 email-env
 ##  Project Structure
 
 env/
-  email_env.py
-  models.py
-  tasks.py
-  grader.py
+email_env.py
+models.py
+tasks.py
+grader.py
 
 baseline/
   run_baseline.py
 
-app.py
+app.py            # FastAPI server
 Dockerfile
 openenv.yaml
 README.md
 
----
+⸻
 
-##  What makes this unique
+🧩 OpenEnv Compliance
+	•	step() / reset() / state() implemented
+	•	Typed models used
+	•	Deterministic graders
+	•	Dockerized
+	•	openenv.yaml included
+
+⸻
+
+💡 What makes this unique
 
 This is NOT just classification.
 
@@ -171,3 +180,5 @@ It evaluates:
 
 ##  Conclusion
 A realistic environment for evaluating intelligent agents in real-world workflows.
+
+It tests not just correctness, but decision-making.
