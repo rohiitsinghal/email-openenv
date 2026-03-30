@@ -1,135 +1,121 @@
-📧 Email Triage OpenEnv (Priority-Aware AI Environment)
+#  Email Triage OpenEnv
+###  Priority-Aware AI Decision Environment
 
-🚀 Overview
+ Live Demo: https://rsthepro-email-openenv.hf.space/docs
 
-This project implements a real-world email triage environment following the OpenEnv specification.
+---
 
-It simulates how AI agents manage incoming emails by:
-	•	Classifying emails (spam / complaint / work)
-	•	Extracting useful information
-	•	Generating replies
-	•	Handling priority-based decision making
+## Overview
+This project implements a realistic email triage environment following the OpenEnv specification.
 
-This is NOT a toy problem — it mimics real-world inbox systems.
+Agents must:
+- Classify emails (spam / complaint / work)
+- Extract useful information
+- Generate replies
+- Handle priority-based decision making
 
-⸻
+---
 
-🎯 Key Idea
+##  Why this matters
+Real-world systems are NOT simple classification tasks.
 
-In real systems:
-	•	Urgent emails must be handled first
-	•	Repeating the same action is not allowed
-	•	Agents must take correct decisions in order
+Agents must:
+- Handle urgent emails first 
+- Avoid duplicate actions 
+- Maintain workflow correctness 
+- Make sequential decisions 
 
-This environment enforces all of that.
+---
 
-⸻
+##  Key Features
 
-🧠 Core Features
+###  Real-world simulation
+- Multi-step workflow
+- Stateful environment
+- History tracking
 
-✅ Real-world simulation
-	•	Multi-step workflow (classify / extract / reply)
-	•	Stateful environment with history
+---
 
-⸻
-
-⚡ Priority-based decision making
-
-Each email has:
-	•	high
-	•	medium
-	•	low
+###  Priority-based decision making
+Emails have:
+- high
+- medium
+- low
 
 Rules:
-	•	If high-priority email exists → handling low first gives penalty
-	•	Low-priority emails cannot be completed until high ones are done
+- Ignoring high-priority emails gives penalty
+- Low-priority emails cannot complete before high-priority
 
-⸻
+---
 
-🎯 Reward System
-	•	Correct classification → +1
-	•	Wrong classification → -0.1
-	•	Step penalty → -0.02
-	•	Ignoring priority → -0.3
-	•	Repeating same email → -0.2
-	•	Completing all emails → +0.5
+###  Reward System
 
-This creates a dense and meaningful reward signal
+| Action | Reward |
+|--------|--------|
+| Correct classification | +1 |
+| Wrong classification | -0.1 |
+| Step penalty | -0.02 |
+| Priority violation | -0.3 |
+| Repeat action | -0.2 |
+| Completion bonus | +0.5 |
 
-⸻
+---
 
-🔒 Robust design
-	•	No duplicate processing
-	•	Invalid actions penalized
-	•	Deterministic grading
-	•	Prevents reward exploitation
+###  Robust Design
+- No duplicate processing
+- Deterministic grading
+- Anti-cheat logic
+- Workflow enforcement
 
-⸻
+---
 
-🏗️ API Endpoints
+##  API Endpoints
 
-🔹 Reset
-
+### Reset
 POST /reset?level=easy|medium|hard
 
-⸻
-
-🔹 Step
-
+### Step
 POST /step
 
 Example:
 {
-“action_type”: “classify”,
-“email_id”: 1,
-“content”: “complaint”
+  "action_type": "classify",
+  "email_id": 1,
+  "content": "complaint"
 }
 
-⸻
-
-🔹 State
-
+### State
 GET /state
 
-⸻
-
-🔹 Tasks
-
+### Tasks
 GET /tasks
 
-⸻
-
-🔹 Grader
-
+### Grader
 POST /grader
 
-⸻
+---
 
-📊 Difficulty Levels
+##  Difficulty Levels
 
-Easy
-	•	Simple classification
+### Easy
+Basic classification
 
-Medium
-	•	Mixed intent emails
+### Medium
+Mixed intent emails
 
-Hard
-	•	Priority + ambiguity
-	•	Requires planning
+### Hard
+Priority + decision making
 
-⸻
+---
 
-🧪 Baseline Agent
+##  Baseline Agent
 
 Run:
 python baseline/run_baseline.py
 
-Example output:
-Final Reward: ~1.4
+---
 
-⸻
-
-🐳 Docker Setup
+##  Docker Setup
 
 Build:
 docker build -t email-env .
@@ -137,69 +123,51 @@ docker build -t email-env .
 Run:
 docker run -p 8000:8000 email-env
 
-Open:
-http://localhost:8000/docs
+---
 
-⸻
-
-📁 Project Structure
+##  Project Structure
 
 env/
-email_env.py
-models.py
-tasks.py
-grader.py
+  email_env.py
+  models.py
+  tasks.py
+  grader.py
 
 baseline/
-run_baseline.py
+  run_baseline.py
 
 app.py
 Dockerfile
 openenv.yaml
 README.md
 
-⸻
+---
 
-🧩 OpenEnv Compliance
-	•	step() / reset() / state() implemented
-	•	Typed models used
-	•	Deterministic graders
-	•	Dockerized
-	•	openenv.yaml included
-
-⸻
-
-💡 What makes this unique
+##  What makes this unique
 
 This is NOT just classification.
 
-It introduces:
-	•	Sequential decision-making
-	•	Priority constraints
-	•	Workflow correctness
+It evaluates:
+- Decision order
+- Priority handling
+- Workflow correctness
 
-Agents must decide WHAT to do and WHEN.
+---
 
-⸻
+##  Use Cases
+- Email assistants
+- Customer support AI
+- RL benchmarking
+- Agent evaluation
 
-🏆 Use Cases
-	•	Email assistants
-	•	Customer support AI
-	•	RL benchmarking
-	•	Agent evaluation
+---
 
-⸻
+##  Future Scope
+- Email threads
+- Multi-agent systems
+- Time-based penalties
 
-🔮 Future Scope
-	•	Email threads
-	•	Multi-agent coordination
-	•	Deadline-based rewards
-	•	Human feedback loop
+---
 
-⸻
-
-🙌 Conclusion
-
-This environment provides a realistic setup for evaluating AI agents in real-world workflows.
-
-It tests not just correctness, but decision-making.
+##  Conclusion
+A realistic environment for evaluating intelligent agents in real-world workflows.
