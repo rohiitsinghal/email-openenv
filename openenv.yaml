@@ -1,0 +1,13 @@
+name: my_env_v4
+description: Multi-step email triage environment
+
+observation_space:
+  emails: list
+  history: list
+
+action_space:
+  decision: ["reply", "ignore", "escalate"]
+
+reward:
+  type: float
+  range: [0.0, 1.0]
