@@ -1,12 +1,3 @@
----
-title: Email OpenEnv
-emoji: 📧
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-app_file: app.py
-pinned: false
----
 
 # 🚀 Email Triage OpenEnv
 ### A Real-World, Multi-Step Decision Environment for Evaluating Intelligent Agents
