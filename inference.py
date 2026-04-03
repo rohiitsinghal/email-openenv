@@ -10,7 +10,7 @@ API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-7B-Instruct")
 
-IMAGE_NAME = os.getenv("IMAGE_NAME", "my-env-image")
+LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME", "my-env-image")
 
 MAX_STEPS = 3
 
@@ -37,7 +37,7 @@ async def main():
     else:
         client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
 
-    env = await MyEnvV4Env.from_docker_image(IMAGE_NAME)
+    env = await MyEnvV4Env.from_docker_image(LOCAL_IMAGE_NAME)
 
     rewards = []
     steps = 0

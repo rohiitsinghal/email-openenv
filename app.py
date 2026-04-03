@@ -2,7 +2,12 @@ from fastapi import FastAPI
 from env.email_env import EmailEnv
 from env.models import Action
 
+
 app = FastAPI()
+
+@app.get("/")
+def home():
+    return {"message": "Email OpenEnv is running "}
 
 env = EmailEnv(task_level="easy")
 
@@ -37,3 +42,7 @@ def grader():
         "score": 0.8,
         "message": "Baseline grader output"
     }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=7860)
