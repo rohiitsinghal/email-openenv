@@ -1,4 +1,3 @@
-
 def load_task(level):
     return [
         {
@@ -8,15 +7,21 @@ def load_task(level):
             "correct_action": "escalate"
         },
         {
-            "email_text": "Weekly newsletter subscription",
-            "sender": "marketing",
+            "email_text": "Hey just checking in, no rush",
+            "sender": "manager",
             "urgency_hint": "low",
+            "correct_action": "reply"
+        },
+        {
+            "email_text": "🔥 LIMITED TIME OFFER!!! CLICK NOW",
+            "sender": "unknown",
+            "urgency_hint": "high",
             "correct_action": "ignore"
         },
         {
-            "email_text": "Meeting reschedule request",
-            "sender": "manager",
+            "email_text": "Security alert: suspicious login detected",
+            "sender": "security",
             "urgency_hint": "medium",
-            "correct_action": "reply"
+            "correct_action": "escalate"
         }
     ]

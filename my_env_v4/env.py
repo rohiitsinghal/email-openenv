@@ -44,8 +44,20 @@ class MyEnvV4Env:
         correct = current_email["correct_action"]
 
         if action.decision == correct:
-            reward += 0.5
+            reward += 0.6
             self.completed.add(self.current_index)
+        else:
+            # intelligent partial reward
+            if correct == "escalate" and action.decision == "reply":
+                reward += 0.3
+            elif correct == "ignore" and action.decision == "reply":
+                reward += 0.1
+
+        # track history
+        self.history.append({
+            "email": current_email["email_text"],
+            "action": action.decision
+        })
 
         # move to next email
         self.current_index += 1
@@ -58,7 +70,8 @@ class MyEnvV4Env:
             if len(self.completed) == len(self.emails):
                 reward += 0.5
 
-        reward = max(0.0, min(1.0, reward))
+        # normalize reward across steps to keep total score within [0,1]
+        reward = max(0.0, min(1.0, reward)) / len(self.emails)
 
         return StepResult(
             observation=Observation(

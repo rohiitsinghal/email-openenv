@@ -1,184 +1,224 @@
-#  Email Triage OpenEnv
-###  Priority-Aware AI Decision Environment
+# 🚀 Email Triage OpenEnv
+### A Real-World, Multi-Step Decision Environment for Evaluating Intelligent Agents
 
- Live Demo: https://rsthepro-email-openenv.hf.space/docs
-
----
-
-## Overview
-This project implements a realistic email triage environment following the OpenEnv specification.
-
-Agents must:
-- Classify emails (spam / complaint / work)
-- Extract useful information
-- Generate replies
-- Handle priority-based decision making
+🔗 Live Demo: https://rsthepro-email-openenv.hf.space/docs
 
 ---
 
-##  Why this matters
-Real-world systems are NOT simple classification tasks.
+## 🧠 Overview
+This project implements a **realistic, production-inspired email triage environment** built using the OpenEnv specification.
 
-Agents must:
-- Handle urgent emails first 
-- Avoid duplicate actions 
-- Maintain workflow correctness 
-- Make sequential decisions 
+Unlike toy environments, this system evaluates **sequential decision-making under constraints**, simulating how real AI agents operate in workplace scenarios.
 
----
-
-##  Key Features
-
-###  Real-world simulation
-- Multi-step workflow
-- Stateful environment
-- History tracking
+Agents are required to:
+- 📩 Understand email content
+- ⚡ Prioritize based on urgency
+- 🧠 Make correct decisions (reply / ignore / escalate)
+- 🔁 Maintain state across multiple steps
+- 🚫 Avoid invalid or redundant actions
 
 ---
 
-###  Priority-based decision making
-Emails have:
-- high
-- medium
-- low
+## 🔥 Why This Environment Stands Out
 
-Rules:
-- Ignoring high-priority emails gives penalty
-- Low-priority emails cannot complete before high-priority
+Most benchmarks test *single-step classification*.
+
+This environment tests:
+- ✅ Multi-step reasoning
+- ✅ Workflow correctness
+- ✅ Priority-aware decision making
+- ✅ State tracking and memory
+- ✅ Robust, deterministic evaluation
+
+👉 It closely mirrors **real-world AI assistant behavior**.
 
 ---
 
-###  Reward System
+## ⚙️ Key Features
 
-| Action | Reward |
-|--------|--------|
-| Correct classification | +1 |
-| Wrong classification | -0.1 |
+### 🧩 Multi-Step Environment
+- Processes an entire inbox (not just one email)
+- Requires sequential decision-making
+- Maintains internal state across steps
+
+---
+
+### ⚡ Priority-Aware Logic
+Each email includes an `urgency_hint`:
+- 🔴 High → Must be handled first
+- 🟡 Medium → Context-dependent
+- 🟢 Low → Can be deferred
+
+Violations are penalized → encourages realistic workflows
+
+---
+
+### 🎯 Intelligent Reward System
+
+| Behavior | Reward |
+|---------|--------|
+| Correct decision | +1 |
+| Incorrect decision | -0.1 |
 | Step penalty | -0.02 |
 | Priority violation | -0.3 |
-| Repeat action | -0.2 |
+| Duplicate action | -0.2 |
 | Completion bonus | +0.5 |
 
----
-
-###  Robust Design
-- No duplicate processing
-- Deterministic grading
-- Anti-cheat logic
-- Workflow enforcement
+✔ Designed to reward **reasoning**, not guessing
+✔ Encourages optimal decision sequences
 
 ---
 
-##  API Endpoints
+### 🧠 Stateful Decision Tracking
+- Maintains history of actions
+- Prevents duplicate processing
+- Enables reasoning over past steps
 
-### Reset
+---
+
+### 🛡 Robust & Deterministic
+- Fully deterministic grading
+- No randomness in evaluation
+- Offline-compatible (no API dependency required)
+
+---
+
+## 🔌 API Endpoints
+
+### 🔄 Reset Environment
+```
 POST /reset?level=easy|medium|hard
+```
 
-### Step
+### ▶️ Take Step
+```
 POST /step
-
+```
 Example:
+```json
 {
   "action_type": "classify",
   "email_id": 1,
   "content": "complaint"
 }
+```
 
-### State
+### 📊 Get State
+```
 GET /state
+```
 
-### Tasks
+### 📋 Get Tasks
+```
 GET /tasks
+```
 
-### Grader
+### 🧪 Evaluate Actions
+```
 POST /grader
+```
 
 ---
 
-##  Difficulty Levels
+## 🎮 Difficulty Levels
 
-### Easy
-Basic classification
-
-### Medium
-Mixed intent emails
-
-### Hard
-Priority + decision making
+| Level | Description |
+|------|------------|
+| Easy | Basic classification |
+| Medium | Mixed-intent emails |
+| Hard | Priority + workflow constraints |
 
 ---
 
-##  Baseline Agent
+## 🤖 Baseline Agent
 
-Run:
+Run the baseline agent:
+```
 python baseline/run_baseline.py
+```
 
 ---
 
-##  Docker Setup
+## 🐳 Docker Setup
 
-Build:
+### Build
+```
 docker build -t email-env .
+```
 
-Run:
-docker run -p 8000:8000 email-env
+### Run
+```
+docker run email-env
+```
 
 ---
 
-##  Project Structure
+## 📁 Project Structure
 
-env/
-email_env.py
-models.py
-tasks.py
-grader.py
+```
+my_env_v4/
+  env.py
+  models.py
+  tasks.py
+  grader.py
 
-baseline/
-  run_baseline.py
-
-app.py            # FastAPI server
+inference.py
 Dockerfile
 openenv.yaml
 README.md
+```
 
-⸻
+---
 
-🧩 OpenEnv Compliance
-	•	step() / reset() / state() implemented
-	•	Typed models used
-	•	Deterministic graders
-	•	Dockerized
-	•	openenv.yaml included
+## ✅ OpenEnv Compliance
 
-⸻
+✔ step(), reset(), state() implemented  
+✔ Async environment support  
+✔ Typed models (Pydantic)  
+✔ Deterministic grading  
+✔ Dockerized execution  
+✔ openenv.yaml defined  
 
-💡 What makes this unique
+---
 
-This is NOT just classification.
+## 💡 What Makes This Unique
+
+This is **NOT just classification**.
 
 It evaluates:
-- Decision order
-- Priority handling
-- Workflow correctness
+- 🧠 Decision order
+- ⚡ Priority handling
+- 🔁 Multi-step reasoning
+- 📊 Workflow correctness
+
+👉 Closer to real production AI systems than academic benchmarks.
 
 ---
 
-##  Use Cases
-- Email assistants
-- Customer support AI
-- RL benchmarking
-- Agent evaluation
+## 🧪 Use Cases
+
+- AI Email Assistants
+- Customer Support Automation
+- Reinforcement Learning Environments
+- Agent Benchmarking Systems
 
 ---
 
-##  Future Scope
-- Email threads
-- Multi-agent systems
+## 🔮 Future Scope
+
+- Email threading
+- Multi-agent collaboration
 - Time-based penalties
+- Real-world dataset integration
 
 ---
 
-##  Conclusion
-A realistic environment for evaluating intelligent agents in real-world workflows.
+## 🏁 Conclusion
 
-It tests not just correctness, but decision-making.
+A **realistic, high-signal evaluation environment** for modern AI agents.
+
+Designed to test not just *what* decisions are made — but *how* and *in what order*.
+
+---
+
+⭐ If you found this useful, consider starring the repo!

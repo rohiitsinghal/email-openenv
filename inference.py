@@ -76,14 +76,16 @@ Only output ONE word.
                 )
                 action_text = completion.choices[0].message.content.strip().lower()
             else:
-                # fallback rule-based policy
+                # fallback rule-based policy (improved)
                 current_email = obs.emails[min(step-1, len(obs.emails)-1)]
                 text = current_email["email_text"].lower()
+                urgency = current_email.get("urgency_hint", "").lower()
 
-                if "server" in text or "security" in text:
-                    action_text = "escalate"
-                elif "newsletter" in text or "offer" in text:
+                # better priority: spam -> ignore, high urgency -> escalate, else reply
+                if any(word in text for word in ["offer", "newsletter", "click", "discount", "subscribe", "promotion"]):
                     action_text = "ignore"
+                elif urgency == "high":
+                    action_text = "escalate"
                 else:
                     action_text = "reply"
 
@@ -103,7 +105,7 @@ Only output ONE word.
             if done:
                 break
 
-        success = sum(rewards) > 0.5
+        success = sum(rewards) >= 0.4
 
     finally:
         await env.close()
