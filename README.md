@@ -14,7 +14,7 @@ Unlike toy environments, this system evaluates **sequential decision-making unde
 Agents are required to:
 - 📩 Understand email content
 - ⚡ Prioritize based on urgency
-- 🧠 Make correct decisions (reply / ignore / escalate)
+- 🧠 Make optimal decisions (reply / ignore / escalate) under ambiguity
 - 🔁 Maintain state across multiple steps
 - 🚫 Avoid invalid or redundant actions
 
@@ -30,6 +30,10 @@ This environment tests:
 - ✅ Priority-aware decision making
 - ✅ State tracking and memory
 - ✅ Robust, deterministic evaluation
+
+- ✅ Multiple task distributions (easy / medium / hard)
+- ✅ Ambiguous and deceptive scenarios (e.g., urgent-looking spam, low-priority complaints)
+- ✅ Non-binary reward shaping (best / partial / harmful actions)
 
 👉 It closely mirrors **real-world AI assistant behavior**.
 
@@ -58,15 +62,17 @@ Violations are penalized → encourages realistic workflows
 
 | Behavior | Reward |
 |---------|--------|
-| Correct decision | +1 |
+| Best action (optimal) | +1.0 |
+| Good but suboptimal | +0.3 to +0.8 |
 | Incorrect decision | -0.1 |
+| Harmful decision | -0.5 to -0.7 |
 | Step penalty | -0.02 |
 | Priority violation | -0.3 |
 | Duplicate action | -0.2 |
 | Completion bonus | +0.5 |
 
-✔ Designed to reward **reasoning**, not guessing
-✔ Encourages optimal decision sequences
+✔ Uses **non-binary grading** to evaluate decision quality  
+✔ Rewards reasoning under ambiguity, not just correctness
 
 ---
 
@@ -74,6 +80,13 @@ Violations are penalized → encourages realistic workflows
 - Maintains history of actions
 - Prevents duplicate processing
 - Enables reasoning over past steps
+
+---
+
+### 🧩 Multi-Task Evaluation
+- Supports 3 distinct task distributions
+- Each task has its own grading behavior
+- Ensures agents generalize across scenarios
 
 ---
 
@@ -125,9 +138,9 @@ POST /grader
 
 | Level | Description |
 |------|------------|
-| Easy | Basic classification |
-| Medium | Mixed-intent emails |
-| Hard | Priority + workflow constraints |
+| Easy | Clear signals (spam vs work vs complaint) |
+| Medium | Mixed intent + moderate ambiguity |
+| Hard | Deceptive and ambiguous cases requiring judgment |
 
 ---
 
@@ -191,6 +204,7 @@ It evaluates:
 - ⚡ Priority handling
 - 🔁 Multi-step reasoning
 - 📊 Workflow correctness
+- 🎭 Tests decision quality under ambiguity and conflicting signals
 
 👉 Closer to real production AI systems than academic benchmarks.
 
