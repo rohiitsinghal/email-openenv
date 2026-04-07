@@ -59,12 +59,29 @@ def grade_email_medium(state, action):
 
 def grade_email_hard(state, action):
     label = state.get("label", "")
+    priority = state.get("priority", "")
+    act = action.get("type")
+
     reward = 0.0
 
-    if action.get("type") == "reply":
-        reward += grade_reply(action.get("content", ""), label)
+    # --- Best actions (full reward) ---
+    if label == "complaint" and act == "escalate":
+        reward = 1.0
+    elif label == "work" and act == "reply":
+        reward = 0.8
+    elif label == "spam" and act == "ignore":
+        reward = 0.7
 
-    if action.get("type") == "ignore" and label == "spam":
-        reward += 0.5
+    # --- Partially correct actions ---
+    elif label == "complaint" and act == "reply":
+        reward = 0.5
+    elif label == "work" and act == "ignore":
+        reward = 0.3
 
-    return min(reward, 1.0), True
+    # --- Wrong / harmful actions ---
+    elif label == "spam" and act == "reply":
+        reward = -0.5
+    elif act == "ignore" and priority == "high":
+        reward = -0.7
+
+    return reward, True

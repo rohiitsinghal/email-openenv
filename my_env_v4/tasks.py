@@ -62,6 +62,18 @@ def load_task(level):
                 "sender": "manager",
                 "urgency_hint": "medium",
                 "correct_action": "reply"
+            },
+            {
+                "email_text": "Not urgent but I think I was charged twice",
+                "sender": "client",
+                "urgency_hint": "low",
+                "correct_action": "reply"
+            },
+            {
+                "email_text": "URGENT: Secure your account now by clicking this link",
+                "sender": "unknown",
+                "urgency_hint": "high",
+                "correct_action": "ignore"
             }
         ]
 
