@@ -19,7 +19,7 @@ class EmailEnv:
 
     def state(self):
         return {
-            "emails": [e.dict() for e in self.emails],
+            "emails": self.emails,
             "history": self.history
         }
     
@@ -49,29 +49,28 @@ class EmailEnv:
                 info={"error": "Email already processed"}
             )
 
-        if action.action_type == "classify":
-            reward = grade_classification(action.content, email.label)
+        # --- Task-level grading ---
+        state = {
+            "label": email.label,
+            "body": email.body,
+            "priority": email.priority
+        }
 
-            # PRIORITY LOGIC (correct placement)
-            high_priority_exists = any(
-                e.id not in self.completed and e.priority == "high"
-                for e in self.emails
-            )
+        action_dict = {
+            "type": action.action_type,
+            "content": action.content
+        }
 
-            if high_priority_exists and email.priority != "high":
-                reward -= 0.3
-
-            if reward == 0:
-                reward -= 0.1
-
-        elif action.action_type == "extract":
-            reward = grade_extraction(action.content, email.body)
-
-        elif action.action_type == "reply":
-            reward = grade_reply(action.content, email.label)
-
+        if self.task_level == "easy":
+            task_reward, _ = grade_email_easy(state, action_dict)
+        elif self.task_level == "medium":
+            task_reward, _ = grade_email_medium(state, action_dict)
+        elif self.task_level == "hard":
+            task_reward, _ = grade_email_hard(state, action_dict)
         else:
-            reward = -0.1
+            task_reward = 0.0
+
+        reward += task_reward
 
         # Only allow completion if either:
         # 1. This email is high priority OR

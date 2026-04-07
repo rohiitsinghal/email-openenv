@@ -29,3 +29,42 @@ def grade_reply(reply, label):
             score += 1.0
 
     return min(score, 1.0)
+
+
+# --- OpenEnv Task-Level Graders ---
+
+def grade_email_easy(state, action):
+    label = state.get("label", "")
+
+    if action.get("type") == "reply":
+        reward = grade_reply(action.get("content", ""), label)
+    else:
+        reward = 0.0
+
+    return reward, True
+
+
+def grade_email_medium(state, action):
+    label = state.get("label", "")
+
+    if action.get("type") == "reply":
+        reward = grade_reply(action.get("content", ""), label)
+    elif action.get("type") == "escalate":
+        reward = 0.5
+    else:
+        reward = 0.0
+
+    return reward, True
+
+
+def grade_email_hard(state, action):
+    label = state.get("label", "")
+    reward = 0.0
+
+    if action.get("type") == "reply":
+        reward += grade_reply(action.get("content", ""), label)
+
+    if action.get("type") == "ignore" and label == "spam":
+        reward += 0.5
+
+    return min(reward, 1.0), True
