@@ -140,7 +140,7 @@ def main() -> None:
         model=model,
         processing_class=tokenizer,
         train_dataset=dataset,
-        dataset_text_field="text",
+        formatting_func=lambda example: example["text"],
         args=TrainingArguments(
             output_dir="outputs/trl_emailopenenv",
             per_device_train_batch_size=2,
