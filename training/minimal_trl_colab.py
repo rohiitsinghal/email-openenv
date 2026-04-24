@@ -78,7 +78,7 @@ def make_train_dataset(n_episodes: int = 50) -> Dataset:
         obs = env.reset()
         feedback = 0.0
 
-        for email in [e.dict() for e in obs.emails]:
+        for email in [e.model_dump() for e in obs.emails]:
             action_type = heuristic_policy(email, feedback)
             rows.append({
                 "text": f"{to_prompt(email)} {action_type}",
@@ -108,7 +108,7 @@ def eval_heuristic() -> List[EpisodeResult]:
         total_reward = 0.0
         feedback = 0.0
 
-        for email in [e.dict() for e in obs.emails]:
+        for email in [e.model_dump() for e in obs.emails]:
             action_type = heuristic_policy(email, feedback)
             result = env.step(Action(
                 action_type=action_type,
@@ -138,7 +138,7 @@ def main() -> None:
 
     trainer = SFTTrainer(
         model=model,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
         train_dataset=dataset,
         dataset_text_field="text",
         args=TrainingArguments(
