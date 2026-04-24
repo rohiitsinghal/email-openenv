@@ -11,6 +11,8 @@ This script:
 - Evaluates reward before and after training using the same benchmark episodes
 """
 
+import os
+import sys
 from dataclasses import dataclass
 from typing import Dict, List
 import json
@@ -19,6 +21,10 @@ import random
 from datasets import Dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments
 from trl import SFTTrainer
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
 
 from my_env_v4.env import EmailEnv
 from my_env_v4.models import Action
