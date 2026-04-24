@@ -101,7 +101,7 @@ Violations are penalized → encourages realistic workflows
 
 ### 🔄 Reset Environment
 ```
-POST /reset?level=easy|medium|hard
+POST /reset?level=easy|medium|hard|round2
 ```
 
 ### ▶️ Take Step
@@ -111,25 +111,17 @@ POST /step
 Example:
 ```json
 {
-  "action_type": "classify",
+  "action_type": "reply",
   "email_id": 1,
-  "content": "complaint"
+  "content": "Acknowledged. We are handling this now.",
+  "actor": "coordinator",
+  "feedback": 0.0
 }
 ```
 
 ### 📊 Get State
 ```
 GET /state
-```
-
-### 📋 Get Tasks
-```
-GET /tasks
-```
-
-### 🧪 Evaluate Actions
-```
-POST /grader
 ```
 
 ---
@@ -141,6 +133,19 @@ POST /grader
 | Easy | Clear signals (spam vs work vs complaint) |
 | Medium | Mixed intent + moderate ambiguity |
 | Hard | Deceptive and ambiguous cases requiring judgment |
+| Round2 | Mixed work + personal long-horizon scenarios with dependencies |
+
+Run Round 2 mode:
+```bash
+curl -X POST "http://localhost:8000/reset?level=round2"
+python inference.py
+```
+
+Round 2 alignment implemented in code:
+- Multi-agent interaction signal via `actor`
+- Long-horizon timeline via `current_day` and due-day handling
+- World modeling via `domain`, `user_trust`, and `world_model`
+- Self-improvement hook via action `feedback` and adaptive baseline policy
 
 ---
 
@@ -187,11 +192,43 @@ README.md
 ## ✅ OpenEnv Compliance
 
 ✔ step(), reset(), state() implemented  
-✔ Async environment support  
 ✔ Typed models (Pydantic)  
 ✔ Deterministic grading  
 ✔ Dockerized execution  
 ✔ openenv.yaml defined  
+
+---
+
+## 🏆 Hackathon Submission Pack
+
+This repository includes the core artifacts to maximize judging score:
+
+- Training script (HF TRL, Colab-ready): `training/minimal_trl_colab.py`
+- Colab quickstart steps: `training/COLAB_QUICKSTART.md`
+- 2-minute blog/video narrative: `BLOG_VIDEO_SCRIPT_2MIN.md`
+- Winning checklist and score strategy: `HACKATHON_WINNING_CHECKLIST.md`
+
+### Recommended submission flow
+
+1. Deploy app to Hugging Face Spaces (OpenEnv compliant endpoint).
+2. Run baseline metrics on `easy`, `medium`, `hard`, `round2`.
+3. Run Colab training script and export reward summary.
+4. Publish blog/video using the 2-minute script.
+5. Attach links and metrics artifact in final submission.
+
+### Reward Improvement Evidence
+
+Run:
+
+```bash
+python training/evaluate_rewards.py
+```
+
+This writes:
+
+- `training/reward_improvement.json`
+
+Current sample output in this repo shows a positive average delta between a naive baseline policy and adaptive policy.
 
 ---
 

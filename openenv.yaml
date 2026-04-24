@@ -1,13 +1,20 @@
 name: my_env_v4
-description: Multi-step email triage environment
+description: Multi-agent, long-horizon email and life-ops triage environment
 
 observation_space:
   emails: list
   history: list
+  current_day: int
+  user_trust: float
+  world_model: object
 
 action_space:
-  decision: ["reply", "ignore", "escalate"]
+  action_type: ["reply", "ignore", "escalate"]
+  email_id: int
+  content: string
+  actor: ["coordinator", "triage_agent", "planning_agent", "communication_agent"]
+  feedback: float
 
 reward:
   type: float
-  range: [0.0, 1.0]
+  range: [-1.0, 1.5]

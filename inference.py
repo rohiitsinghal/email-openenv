@@ -1,116 +1,64 @@
 import os
-import asyncio
-from typing import List, Optional
-from openai import OpenAI
+import requests
 
-from my_env_v4.env import MyEnvV4Env
-from my_env_v4.models import MyEnvV4Action
-
-API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
-API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
-MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-7B-Instruct")
-
-LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME", "my-env-image")
-
-MAX_STEPS = 3
+BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
+LEVEL = os.getenv("LEVEL", "round2")
 
 
-def log_start(task: str, env: str, model: str):
-    print(f"[START] task={task} env={env} model={model}", flush=True)
+def triage_agent(email):
+    text = f"{email['subject']} {email['body']}".lower()
+    if any(x in text for x in ["offer", "click", "won", "discount", "lottery", "prize"]):
+        return "ignore"
+    if email.get("priority") == "high" and any(x in text for x in ["failed", "security", "urgent", "escalation"]):
+        return "escalate"
+    return "reply"
 
 
-def log_step(step: int, action: str, reward: float, done: bool, error: Optional[str]):
-    err = error if error else "null"
-    print(f"[STEP] step={step} action={action} reward={reward:.2f} done={str(done).lower()} error={err}", flush=True)
+def communication_agent(action_type):
+    if action_type == "reply":
+        return "Acknowledged. We are handling this now."
+    if action_type == "escalate":
+        return "Escalating this issue for immediate resolution."
+    return "No response required."
 
 
-def log_end(success: bool, steps: int, rewards: List[float]):
-    rewards_str = ",".join(f"{r:.2f}" for r in rewards)
-    score = sum(rewards)
-    print(f"[END] success={str(success).lower()} steps={steps} score={score:.3f} rewards={rewards_str}", flush=True)
+def run_episode():
+    res = requests.post(f"{BASE_URL}/reset", params={"level": LEVEL}, timeout=30)
+    res.raise_for_status()
+    payload = res.json()
+    emails = payload["emails"]
 
+    total_reward = 0.0
+    recent_feedback = []
 
-async def main():
-    if not API_KEY:
-        print("[WARNING] No API key found, using fallback policy", flush=True)
-        client = None
-    else:
-        client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
+    for email in emails:
+        feedback = (sum(recent_feedback[-3:]) / min(3, len(recent_feedback))) if recent_feedback else 0.0
+        action_type = triage_agent(email)
 
-    env = await MyEnvV4Env.from_docker_image(LOCAL_IMAGE_NAME)
+        if feedback < 0 and email.get("priority") == "high" and action_type == "reply":
+            action_type = "escalate"
 
-    rewards = []
-    steps = 0
+        action = {
+            "action_type": action_type,
+            "email_id": email["id"],
+            "content": communication_agent(action_type),
+            "actor": "coordinator",
+            "feedback": feedback,
+        }
 
-    log_start("email_task", "my_env_v4", MODEL_NAME)
+        step_res = requests.post(f"{BASE_URL}/step", json=action, timeout=30)
+        step_res.raise_for_status()
+        result = step_res.json()
 
-    try:
-        result = await env.reset()
+        reward = float(result.get("reward", 0.0))
+        total_reward += reward
+        recent_feedback.append(1.0 if reward > 0 else -1.0)
 
-        for step in range(1, MAX_STEPS + 1):
-            obs = result.observation
+        if result.get("done"):
+            break
 
-            prompt = f"""
-You are an intelligent email assistant.
-
-Inbox:
-{obs.emails}
-
-History:
-{obs.history}
-
-You must decide the correct action for the CURRENT email.
-
-Allowed actions:
-- reply
-- ignore
-- escalate
-
-Only output ONE word.
-"""
-
-            if client:
-                completion = client.chat.completions.create(
-                    model=MODEL_NAME,
-                    messages=[{"role": "user", "content": prompt}],
-                )
-                action_text = completion.choices[0].message.content.strip().lower()
-            else:
-                # fallback rule-based policy (improved)
-                current_email = obs.emails[min(step-1, len(obs.emails)-1)]
-                text = current_email["email_text"].lower()
-                urgency = current_email.get("urgency_hint", "").lower()
-
-                # better priority: spam -> ignore, high urgency -> escalate, else reply
-                if any(word in text for word in ["offer", "newsletter", "click", "discount", "subscribe", "promotion"]):
-                    action_text = "ignore"
-                elif urgency == "high":
-                    action_text = "escalate"
-                else:
-                    action_text = "reply"
-
-            if action_text not in ["reply", "ignore", "escalate"]:
-                action_text = "ignore"
-
-            result = await env.step(MyEnvV4Action(decision=action_text))
-
-            reward = result.reward
-            done = result.done
-
-            rewards.append(reward)
-            steps = step
-
-            log_step(step, action_text, reward, done, None)
-
-            if done:
-                break
-
-        success = sum(rewards) >= 0.4
-
-    finally:
-        await env.close()
-        log_end(success, steps, rewards)
+    print(f"Episode level={LEVEL} total_reward={total_reward:.3f}")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    run_episode()

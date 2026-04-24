@@ -6,9 +6,11 @@ authors = [{ name="Rohit Singhal" }]
 
 dependencies = [
     "openenv-core>=0.2.0",
+    "pydantic",
     "fastapi",
     "uvicorn",
-    "openai"
+    "openai",
+    "requests"
 ]
 
 [project.scripts]

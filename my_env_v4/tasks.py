@@ -1,81 +1,98 @@
+from .models import Email
+
+
 def load_task(level):
     if level == "easy":
         return [
-            {
-                "email_text": "Meeting scheduled for tomorrow",
-                "sender": "manager",
-                "urgency_hint": "low",
-                "correct_action": "reply"
-            },
-            {
-                "email_text": "🔥 LIMITED TIME OFFER!!! CLICK NOW",
-                "sender": "unknown",
-                "urgency_hint": "high",
-                "correct_action": "ignore"
-            }
+            Email(id=1, subject="Meeting tomorrow", body="Please confirm meeting time.", label="work", priority="medium"),
+            Email(id=2, subject="Limited-time offer", body="Click now to claim prize.", label="spam", priority="low"),
         ]
 
-    elif level == "medium":
+    if level == "medium":
         return [
-            {
-                "email_text": "Client angry: payment failed twice",
-                "sender": "client",
-                "urgency_hint": "high",
-                "correct_action": "escalate"
-            },
-            {
-                "email_text": "Hey just checking in, no rush",
-                "sender": "manager",
-                "urgency_hint": "low",
-                "correct_action": "reply"
-            },
-            {
-                "email_text": "Newsletter: weekly tech updates",
-                "sender": "unknown",
-                "urgency_hint": "low",
-                "correct_action": "ignore"
-            }
+            Email(id=1, subject="Client payment failed", body="Please help urgently.", label="complaint", priority="high"),
+            Email(id=2, subject="Weekly check-in", body="No rush, share updates.", label="work", priority="low"),
+            Email(id=3, subject="Weekly newsletter", body="Top tech stories this week.", label="spam", priority="low"),
         ]
 
-    elif level == "hard":
+    if level == "hard":
         return [
-            {
-                "email_text": "Account issue, not urgent but confusing",
-                "sender": "client",
-                "urgency_hint": "medium",
-                "correct_action": "reply"
-            },
-            {
-                "email_text": "Security alert: suspicious login detected",
-                "sender": "security",
-                "urgency_hint": "medium",
-                "correct_action": "escalate"
-            },
-            {
-                "email_text": "Special discount just for you, act fast!",
-                "sender": "unknown",
-                "urgency_hint": "high",
-                "correct_action": "ignore"
-            },
-            {
-                "email_text": "Following up on last week's discussion",
-                "sender": "manager",
-                "urgency_hint": "medium",
-                "correct_action": "reply"
-            },
-            {
-                "email_text": "Not urgent but I think I was charged twice",
-                "sender": "client",
-                "urgency_hint": "low",
-                "correct_action": "reply"
-            },
-            {
-                "email_text": "URGENT: Secure your account now by clicking this link",
-                "sender": "unknown",
-                "urgency_hint": "high",
-                "correct_action": "ignore"
-            }
+            Email(id=1, subject="Security alert", body="Suspicious login detected.", label="complaint", priority="high"),
+            Email(id=2, subject="CEO review prep", body="Need final deck by 5 PM.", label="work", priority="high"),
+            Email(id=3, subject="You won", body="Claim your reward instantly.", label="spam", priority="low"),
+            Email(id=4, subject="Order charged twice", body="Please resolve billing issue.", label="complaint", priority="medium"),
         ]
 
-    else:
-        return []
+    if level == "round2":
+        return load_round2_task()
+
+    return []
+
+
+def load_round2_task():
+    return [
+        Email(
+            id=1,
+            subject="Client escalation: payment failed",
+            body="Major account blocked. Needs urgent follow-up.",
+            label="complaint",
+            priority="high",
+            domain="work",
+            due_day=2,
+        ),
+        Email(
+            id=2,
+            subject="Team standup reschedule",
+            body="Please confirm a new slot for tomorrow.",
+            label="work",
+            priority="medium",
+            domain="work",
+            due_day=3,
+        ),
+        Email(
+            id=3,
+            subject="School reminder: parent meeting",
+            body="Reminder for Friday evening parent meeting.",
+            label="work",
+            priority="high",
+            domain="personal",
+            due_day=4,
+        ),
+        Email(
+            id=4,
+            subject="Electricity bill due",
+            body="Bill payment due this week to avoid late fee.",
+            label="work",
+            priority="high",
+            domain="personal",
+            due_day=5,
+        ),
+        Email(
+            id=5,
+            subject="Quarterly report draft needed",
+            body="Complete report before client review call.",
+            label="work",
+            priority="medium",
+            domain="work",
+            due_day=6,
+            dependency_ids=[6],
+        ),
+        Email(
+            id=6,
+            subject="Client review call confirmation",
+            body="Confirm agenda and final report attachment.",
+            label="work",
+            priority="high",
+            domain="work",
+            due_day=7,
+        ),
+        Email(
+            id=7,
+            subject="Limited offer! Click now",
+            body="This is likely promotional spam.",
+            label="spam",
+            priority="low",
+            domain="personal",
+            due_day=10,
+        ),
+    ]

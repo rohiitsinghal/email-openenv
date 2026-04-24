@@ -6,7 +6,7 @@ class EmailEnv:
     def __init__(self, task_level="easy"):
         self.task_level = task_level
         self.completed = set()
-        self.steps= 0
+        self.steps = 0
         self.reset()
 
     def reset(self):
@@ -15,12 +15,29 @@ class EmailEnv:
         self.done = False
         self.completed = set()
         self.steps = 0
-        return Observation(emails=self.emails, history=[])
+        self.current_day = 1
+        self.user_trust = 1.0
+        self.world_model = {
+            "work_actions": 0,
+            "personal_actions": 0,
+            "feedback_count": 0,
+            "feedback_sum": 0.0,
+        }
+        return Observation(
+            emails=self.emails,
+            history=[],
+            current_day=self.current_day,
+            user_trust=self.user_trust,
+            world_model=self.world_model,
+        )
 
     def state(self):
         return {
             "emails": self.emails,
-            "history": self.history
+            "history": self.history,
+            "current_day": self.current_day,
+            "user_trust": self.user_trust,
+            "world_model": self.world_model,
         }
     
     def step(self, action: Action):
@@ -34,7 +51,13 @@ class EmailEnv:
 
         if not email:
             return StepResult(
-                observation=Observation(emails=self.emails, history=self.history),
+                observation=Observation(
+                    emails=self.emails,
+                    history=self.history,
+                    current_day=self.current_day,
+                    user_trust=self.user_trust,
+                    world_model=self.world_model,
+                ),
                 reward=-0.2,
                 done=False,
                 info={"error": "Invalid email_id"}
@@ -43,7 +66,13 @@ class EmailEnv:
         if action.email_id in self.completed:
             reward = -0.2
             return StepResult(
-                observation=Observation(emails=self.emails, history=self.history),
+                observation=Observation(
+                    emails=self.emails,
+                    history=self.history,
+                    current_day=self.current_day,
+                    user_trust=self.user_trust,
+                    world_model=self.world_model,
+                ),
                 reward=reward,
                 done=False,
                 info={"error": "Email already processed"}
@@ -53,7 +82,10 @@ class EmailEnv:
         state = {
             "label": email.label,
             "body": email.body,
-            "priority": email.priority
+            "priority": email.priority,
+            "domain": email.domain,
+            "due_day": email.due_day,
+            "dependency_ids": email.dependency_ids,
         }
 
         action_dict = {
@@ -67,10 +99,34 @@ class EmailEnv:
             task_reward, _ = grade_email_medium(state, action_dict)
         elif self.task_level == "hard":
             task_reward, _ = grade_email_hard(state, action_dict)
+        elif self.task_level == "round2":
+            task_reward, _ = grade_email_round2(state, action_dict, self.world_model)
         else:
             task_reward = 0.0
 
         reward += task_reward
+
+        # Encourage coordinator + specialist agent collaboration in round2.
+        if self.task_level == "round2" and action.actor in {
+            "triage_agent", "planning_agent", "communication_agent", "coordinator"
+        }:
+            reward += 0.05
+
+        # Penalize dependency violations (e.g., confirming a call before preparing report).
+        if self.task_level == "round2" and email.dependency_ids:
+            unmet = [dep_id for dep_id in email.dependency_ids if dep_id not in self.completed]
+            if unmet:
+                reward -= 0.25
+
+        # Due-day pressure over a 14-day horizon.
+        if self.task_level == "round2" and self.current_day > email.due_day and action.action_type == "ignore":
+            reward -= 0.35
+
+        # Feedback signal to support post-training/self-improvement loops.
+        if self.task_level == "round2" and action.feedback is not None:
+            self.world_model["feedback_count"] += 1
+            self.world_model["feedback_sum"] += action.feedback
+            reward += 0.1 * max(-1.0, min(1.0, action.feedback))
 
         # Only allow completion if either:
         # 1. This email is high priority OR
@@ -88,10 +144,26 @@ class EmailEnv:
             self.done = True
             reward += 0.5
 
+        if self.task_level == "round2":
+            # Advance one simulated day every two actions.
+            self.current_day = min(14, 1 + (self.steps // 2))
+
+            # Trust changes with outcome quality.
+            if reward < 0:
+                self.user_trust = max(0.0, self.user_trust - 0.05)
+            elif reward > 0.8:
+                self.user_trust = min(1.5, self.user_trust + 0.03)
+
         self.history.append(str(action.dict()))
 
         return StepResult(
-            observation=Observation(emails=self.emails, history=self.history),
+            observation=Observation(
+                emails=self.emails,
+                history=self.history,
+                current_day=self.current_day,
+                user_trust=self.user_trust,
+                world_model=self.world_model,
+            ),
             reward=reward,
             done=self.done,
             info=info

@@ -1,0 +1,17 @@
+{
+  "baseline": {
+    "easy": -0.04,
+    "medium": -0.06,
+    "hard": 1.22,
+    "round2": 5.6433
+  },
+  "improved": {
+    "easy": -0.04,
+    "medium": 0.44,
+    "hard": 2.92,
+    "round2": 7.1433
+  },
+  "baseline_avg": 1.6908,
+  "improved_avg": 2.6158,
+  "delta_avg": 0.925
+}
