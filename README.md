@@ -18,6 +18,31 @@ Agents are required to:
 - 🔁 Maintain state across multiple steps
 - 🚫 Avoid invalid or redundant actions
 
+## 🎯 Problem, Environment, Results, Why It Matters
+
+### Problem
+Office assistants handle mixed intent, ambiguous urgency, and conflicts between work and personal commitments. Most benchmarks test one-shot classification, which does not capture this reality.
+
+### Environment
+`Email OpenEnv` is a multi-step environment where an agent must choose among `reply`, `ignore`, `escalate` while managing:
+- priority constraints,
+- dependency ordering,
+- long-horizon effects (`round2`),
+- work/personal balance,
+- user trust evolution.
+
+### Results
+From `training/reward_improvement.json`:
+- baseline_avg: `1.6908`
+- improved_avg: `2.6158`
+- delta_avg: `+0.925`
+
+From Colab TRL training run:
+- train_loss reduced to around `0.6256` by the end of 30 steps.
+
+### Why It Matters
+This setup evaluates whether an LLM can improve in a realistic assistant workflow, not just classify isolated text snippets.
+
 ---
 
 ## 🔥 Why This Environment Stands Out
@@ -208,6 +233,11 @@ This repository includes the core artifacts to maximize judging score:
 - 2-minute blog/video narrative: `BLOG_VIDEO_SCRIPT_2MIN.md`
 - Winning checklist and score strategy: `HACKATHON_WINNING_CHECKLIST.md`
 
+## 🔗 Submission Links (fill before final submit)
+
+- Hugging Face Space URL: `<ADD_SPACE_URL>`
+- Mini blog or short video URL: `<ADD_BLOG_OR_VIDEO_URL>`
+
 ### Recommended submission flow
 
 1. Deploy app to Hugging Face Spaces (OpenEnv compliant endpoint).
@@ -229,6 +259,23 @@ This writes:
 - `training/reward_improvement.json`
 
 Current sample output in this repo shows a positive average delta between a naive baseline policy and adaptive policy.
+
+## 📈 Plots (committed artifacts)
+
+These are committed to the repository as requested in judging guidance:
+
+- Reward comparison: `assets/reward_comparison.png`
+- Training curve: `assets/training_curve.png`
+
+Regenerate plots with:
+
+```bash
+python training/generate_plots.py
+```
+
+![Reward Comparison](assets/reward_comparison.png)
+
+![Training Curve](assets/training_curve.png)
 
 ---
 

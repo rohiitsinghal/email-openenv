@@ -15,7 +15,7 @@ def reset(level: str = "easy"):
     global _env
     _env = EmailEnv(task_level=level)
     obs = _env.reset()
-    return {"emails": [e.dict() for e in obs.emails], "history": obs.history, "state": _env.state()}
+    return {"emails": [e.model_dump() for e in obs.emails], "history": obs.history, "state": _env.state()}
 
 @app.post("/step")
 def step(action: Action):
@@ -24,7 +24,7 @@ def step(action: Action):
         "reward": result.reward,
         "done": result.done,
         "info": result.info,
-        "observation": result.observation.dict(),
+        "observation": result.observation.model_dump(),
     }
 
 

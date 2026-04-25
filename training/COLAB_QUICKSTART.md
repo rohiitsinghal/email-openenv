@@ -25,6 +25,13 @@ Run these cells in order inside a fresh Colab notebook.
 !pip install -q -r requirements.txt
 ```
 
+Optional (recommended for faster HF downloads):
+
+```python
+import os
+os.environ["HF_TOKEN"] = "<YOUR_HF_TOKEN>"
+```
+
 ### Cell 4: Run the minimal training script
 
 ```bash
@@ -37,7 +44,13 @@ Run these cells in order inside a fresh Colab notebook.
 !python training/evaluate_rewards.py
 ```
 
-### Cell 6: Inspect the output file
+### Cell 6: Generate plot artifacts
+
+```bash
+!python training/generate_plots.py
+```
+
+### Cell 7: Inspect the output files
 
 ```python
 import json
@@ -48,12 +61,18 @@ with open("training/reward_improvement.json", "r", encoding="utf-8") as f:
 data
 ```
 
+```bash
+!ls -lah outputs training assets
+```
+
 ## What to attach in your submission
 
 Attach:
 - command output screenshot
 - outputs/reward_summary.json
 - training/reward_improvement.json
+- assets/reward_comparison.png
+- assets/training_curve.png
 - short note on what changed between before and after
 
 ## Optional stronger variant
