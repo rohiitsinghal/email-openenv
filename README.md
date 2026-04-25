@@ -20,10 +20,10 @@ Scores from the included baseline agent (`inference.py`) running against the liv
 
 | Level | Total Reward | Emails | Notes |
 |-------|-------------|--------|-------|
-| Easy | 0.96 | 2 | Clear spam vs work signals |
-| Medium | 1.94 | 3 | Mixed intent, moderate ambiguity |
-| Hard | 3.92 | 4 | Deceptive cases, strict grading |
-| Round2 | 8.09 | 7 | Long-horizon, dependencies, trust |
+| Easy   | 1.92 | 4 | Clear spam vs work signals |
+| Medium | 3.90 | 5 | Mixed intent, moderate ambiguity |
+| Hard   | 5.38 | 6 | Deceptive cases, strict grading |
+| Round2 | 7.89 | 7 | Long-horizon, dependencies, trust |
 
 Reward improvement over naive baseline (from `training/reward_improvement.json`):
 - Naive baseline avg: `1.69`
