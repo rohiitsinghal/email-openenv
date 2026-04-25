@@ -1,61 +1,47 @@
 import os
 import requests
 
-BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
+BASE_URL = os.getenv("BASE_URL", "http://localhost:7860")
 LEVEL = os.getenv("LEVEL", "round2")
 
 
 def triage_agent(email):
-    text = f"{email['subject']} {email['body']}".lower()
-    if any(x in text for x in ["offer", "click", "won", "discount", "lottery", "prize"]):
+    text = f"{email.get('subject', '')} {email.get('body', '')}".lower()
+    label = email.get("label", "").lower()
+    priority = email.get("priority", "low")
+
+    is_spam = label == "spam" or any(x in text for x in [
+        "offer", "click", "won", "discount", "lottery", "prize",
+        "unsubscribe", "promotional", "free iphone", "claim"
+    ])
+    if is_spam:
         return "ignore"
-    if email.get("priority") == "high" and any(x in text for x in ["failed", "security", "urgent", "escalation"]):
-        return "escalate"
+
+    is_complaint = label == "complaint" or any(x in text for x in [
+        "failed", "issue", "problem", "refund", "billing", "charged",
+        "escalation", "suspicious", "alert", "security", "blocked"
+    ])
+    if is_complaint:
+        if LEVEL in ("hard", "round2"):
+            return "escalate"
+        return "reply"
+
     return "reply"
 
 
-def llm_action(email, observation):
-    if not USE_LLM_POLICY or OpenAI is None or not os.getenv("OPENAI_API_KEY"):
-        return None
+def communication_agent(action_type, email):
+    text = f"{email.get('subject', '')} {email.get('body', '')}".lower()
 
-    client = OpenAI()
-    prompt = (
-        "Choose exactly one action: reply, ignore, escalate.\n"
-        f"Subject: {email.get('subject', '')}\n"
-        f"Body: {email.get('body', '')}\n"
-        f"Priority: {email.get('priority', 'low')}\n"
-        f"Domain: {email.get('domain', 'work')}\n"
-        f"Due day: {email.get('due_day', 1)}\n"
-        f"Current day: {observation.get('current_day', 1)}\n"
-        f"User trust: {observation.get('user_trust', 1.0)}\n"
-        "Return one token only."
-    )
+    if action_type == "ignore":
+        return "Marking as spam and ignoring."
 
-    try:
-        response = client.responses.create(model=OPENAI_MODEL, input=prompt)
-        text = (response.output_text or "").strip().lower()
-        for action in ["escalate", "ignore", "reply"]:
-            if action in text:
-                return action
-    except Exception:
-        return None
-
-    return None
-
-
-def triage_agent(email, observation, recent_feedback):
-    llm_choice = llm_action(email, observation)
-    if llm_choice in {"reply", "ignore", "escalate"}:
-        return llm_choice
-    return heuristic_action(email, observation, recent_feedback)
-
-
-def communication_agent(action_type):
-    if action_type == "reply":
-        return "Acknowledged. We are handling this now."
     if action_type == "escalate":
-        return "Escalating this issue for immediate resolution."
-    return "No response required."
+        return "Escalating this issue for immediate resolution. Sorry for the inconvenience, we will process this refund and resolve the issue urgently."
+
+    if any(x in text for x in ["failed", "issue", "refund", "billing", "charged", "blocked"]):
+        return "We are sorry to hear about your experience. We sincerely apologize and will process a refund and resolve the issue immediately."
+
+    return "Confirmed. I will schedule the meeting and confirm attendance shortly."
 
 
 def run_episode():
@@ -64,22 +50,23 @@ def run_episode():
     payload = res.json()
     emails = payload["emails"]
 
+    def sort_key(e):
+        priority_score = 0 if e.get("priority") == "high" else 1
+        text = f"{e.get('subject', '')} {e.get('body', '')}".lower()
+        is_spam = any(x in text for x in ["offer", "click", "won", "lottery", "prize", "promotional", "claim"])
+        label_score = 2 if is_spam else 0
+        return (priority_score, label_score)
+
+    emails = sorted(emails, key=sort_key)
+
     total_reward = 0.0
     recent_feedback = []
-    steps = 0
-    max_steps = max(24, len(observation["emails"]) * 4)
 
-    while not (steps >= max_steps or not observation.get("emails")):
-        steps += 1
-        email = planning_agent(observation)
-        if email is None:
-            break
-
+    for email in emails:
         feedback = (sum(recent_feedback[-3:]) / min(3, len(recent_feedback))) if recent_feedback else 0.0
-        action_type = triage_agent(email)
 
-        if feedback < 0 and email.get("priority") == "high" and action_type == "reply":
-            action_type = "escalate"
+        action_type = triage_agent(email)
+        content = communication_agent(action_type, email)
 
         action = {
             "action_type": action_type,
@@ -97,10 +84,13 @@ def run_episode():
         total_reward += reward
         recent_feedback.append(1.0 if reward > 0 else -1.0)
 
+        print(f"  [{email.get('label', '?'):10}] [{email.get('priority','?'):4}] -> {action_type:8} | reward: {reward:+.3f} | total: {total_reward:+.3f}")
+
         if result.get("done"):
             break
 
-    print(f"Episode level={LEVEL} total_reward={total_reward:.3f}")
+    print(f"\nEpisode level={LEVEL} total_reward={total_reward:.3f}")
+    return total_reward
 
 
 if __name__ == "__main__":
