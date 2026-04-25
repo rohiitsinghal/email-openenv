@@ -57,6 +57,20 @@ From `training/reward_improvement.json`:
 From Colab TRL training run:
 - train_loss reduced to around `0.6256` by the end of 30 steps.
 
+### Benchmark Snapshot
+From `outputs/benchmark_report.json`:
+- baseline_avg: `1.6908`
+- adaptive_avg: `2.4158`
+- delta_avg: `+0.725`
+
+The benchmark trace shows the full multi-agent flow per email:
+- triage agent
+- planning agent
+- communication agent
+- final coordinator action
+
+This is the clearest evidence in the repo that the project is not just a single-step classifier.
+
 ### Why It Matters
 This setup evaluates whether an LLM can improve in a realistic assistant workflow, not just classify isolated text snippets.
 
@@ -300,8 +314,15 @@ python training/evaluate_rewards.py
 This writes:
 
 - `training/reward_improvement.json`
+- `outputs/benchmark_report.json`
 
 Current sample output in this repo shows a positive average delta between a naive baseline policy and adaptive policy.
+
+Open the benchmark trace directly:
+
+```bash
+cat outputs/benchmark_report.json
+```
 
 ## 📈 Plots (committed artifacts)
 
@@ -348,10 +369,7 @@ It evaluates:
 
 ## 🔮 Future Scope
 
-- Email threading
-- Multi-agent collaboration
-- Time-based penalties
-- Real-world dataset integration
+- Optional: email threading and richer real-world datasets.
 
 ---
 
