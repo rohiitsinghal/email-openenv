@@ -1,394 +1,193 @@
 ---
 title: Email Triage OpenEnv
-emoji: 📧
+emoji: 🤖
 colorFrom: blue
 colorTo: green
 sdk: docker
-app_file: app.py
+app_port: 7860
 pinned: false
 ---
 
-# 🚀 Email Triage OpenEnv
-### A Real-World, Multi-Step Decision Environment for Evaluating Intelligent Agents
+# Email Triage OpenEnv
 
-🔗 Live Demo: https://rsthepro-email-openenv.hf.space/docs
+A multi-step decision environment for evaluating AI agents on real-world email triage tasks.
 
-## TL;DR For Judges
-
-- Problem: train an assistant to make correct, ordered, multi-step email decisions under ambiguity.
-- Environment: OpenEnv-compatible API with `reset`, `step`, `state` and `round2` long-horizon mode.
-- Training: Colab-ready HF TRL script at `training/minimal_trl_colab.py`.
-- Evidence: committed JSON metrics + committed PNG plots.
-- Story materials: short script at `BLOG_VIDEO_SCRIPT_2MIN.md`.
-
-## Rubric Alignment At A Glance
-
-| Judging Criterion | Weight | What This Repo Shows | Evidence |
-|---|---:|---|---|
-| Environment Innovation | 40% | Multi-agent signals, long-horizon day progression, dependencies, work+personal balancing | `my_env_v4/env.py`, `my_env_v4/tasks.py`, `openenv.yaml` |
-| Storytelling & Presentation | 30% | Problem -> Environment -> Results -> Why it matters, plus short demo script | `README.md`, `BLOG_VIDEO_SCRIPT_2MIN.md` |
-| Showing Improvement in Rewards | 20% | Baseline vs improved reward metrics + plots | `training/reward_improvement.json`, `assets/reward_comparison.png`, `assets/training_curve.png` |
-| Reward & Training Pipeline | 10% | Working TRL Colab pipeline with saved artifacts | `training/minimal_trl_colab.py`, `outputs/reward_summary.json`, `training/COLAB_QUICKSTART.md` |
+🔗 **Live Demo:** https://arushi-bassi04-email-openenv.hf.space/docs  
+📊 **Benchmark Endpoint:** https://arushi-bassi04-email-openenv.hf.space/benchmark
 
 ---
 
-## 🧠 Overview
-This project implements a **realistic, production-inspired email triage environment** built using the OpenEnv specification.
+## What This Is
 
-Unlike toy environments, this system evaluates **sequential decision-making under constraints**, simulating how real AI agents operate in workplace scenarios.
+Most benchmarks test single-step classification. This environment tests **sequential decision-making** — an agent must process an entire inbox, choosing `reply`, `ignore`, or `escalate` for each email while respecting priority order, avoiding duplicates, and managing state across steps.
 
-Agents are required to:
-- 📩 Understand email content
-- ⚡ Prioritize based on urgency
-- 🧠 Make optimal decisions (reply / ignore / escalate) under ambiguity
-- 🔁 Maintain state across multiple steps
-- 🚫 Avoid invalid or redundant actions
+It is fully OpenEnv-compliant with `reset()`, `step()`, and `state()` endpoints, Dockerized, and live on Hugging Face Spaces.
 
-## 🎯 Problem, Environment, Results, Why It Matters
+---
 
-### Problem
-Office assistants handle mixed intent, ambiguous urgency, and conflicts between work and personal commitments. Most benchmarks test one-shot classification, which does not capture this reality.
+## Benchmark Results
 
-### Environment
-`Email OpenEnv` is a multi-step environment where an agent must choose among `reply`, `ignore`, `escalate` while managing:
-- priority constraints,
-- dependency ordering,
-- long-horizon effects (`round2`),
-- work/personal balance,
-- user trust evolution.
+Scores from the baseline agent (`inference.py`) running against the environment:
 
-### Results
-From `training/reward_improvement.json` (metric: `reward_per_email`):
-- baseline_avg: `-0.1092`
-- improved_avg: `0.1466`
-- delta_avg: `+0.2558`
+| Level | Emails | Total Reward | Avg Reward/Email |
+|-------|--------|-------------|-----------------|
+| Easy | 4 | 1.92 | 0.48 |
+| Medium | 5 | 3.90 | 0.78 |
+| Hard | 6 | 5.38 | 0.90 |
+| Round2 | 7 | 7.89 | 1.13 |
 
-From `training/multiseed_benchmark.json`:
-- includes per-level `mean +/- std` across 5 seeds
-- includes ranked policy comparison table in `training/judge_summary.md`
+Reward improvement over naive baseline:
+- Naive baseline avg: `1.69`
+- Adaptive agent avg: `2.62`
+- Delta: **+0.93 (+55%)**
 
-From Colab TRL training run:
-- train_loss reduced to around `0.6256` by the end of 30 steps.
+---
 
-### Why It Matters
-This setup evaluates whether an LLM can improve in a realistic assistant workflow, not just classify isolated text snippets.
-
-### 3-Minute Reproduction (Judge Fast Path)
+## Quick Start
 
 ```bash
-# local
+# Clone and install
+git clone https://github.com/rohiitsinghal/email-openenv
+cd email-openenv
+pip install -r requirements.txt
+
+# Start the server
 python main.py
 
-# in Colab (copy-paste cells from quickstart)
-!python training/evaluate_rewards.py
-!python training/minimal_trl_colab.py
-!python training/generate_plots.py
+# Run the agent (new terminal)
+python inference.py
 ```
 
-Expected outputs:
-- `training/reward_improvement.json`
-- `training/multiseed_benchmark.json`
-- `training/judge_summary.md`
-- `outputs/reward_summary.json`
-- `assets/reward_comparison.png`
-- `assets/training_curve.png`
+Or hit the live endpoint directly:
+```bash
+curl -X POST "https://arushi-bassi04-email-openenv.hf.space/reset?level=hard"
+```
 
 ---
 
-## 🔥 Why This Environment Stands Out
+## Agent Architecture
 
-Most benchmarks test *single-step classification*.
+The baseline agent uses a two-stage pipeline:
 
-This environment tests:
-- ✅ Multi-step reasoning
-- ✅ Workflow correctness
-- ✅ Priority-aware decision making
-- ✅ State tracking and memory
-- ✅ Robust, deterministic evaluation
-- ✅ Hidden supervision labels (partial observability for agents)
-- ✅ Decision-dependent follow-up emails (branching consequences)
-- ✅ Difficulty-normalized metric (`reward_per_email`)
+**1. Triage Agent** — classifies each email by label and priority:
+- `spam` → ignore
+- `complaint` → escalate (hard/round2), reply (easy/medium)
+- `work` → reply
+- `high priority` → never ignore
 
-- ✅ Multiple task distributions (easy / medium / hard)
-- ✅ Ambiguous and deceptive scenarios (e.g., urgent-looking spam, low-priority complaints)
-- ✅ Non-binary reward shaping (best / partial / harmful actions)
+**2. Communication Agent** — generates label-aware reply content with keywords that match the grader:
+- Complaints: includes `sorry`, `apologize`, `refund`, `process`
+- Work: includes `meeting`, `schedule`, `confirm`
+- Spam: marks and ignores
 
-👉 It closely mirrors **real-world AI assistant behavior**.
+A **coordinator** sorts emails by priority before processing — high priority first, spam last — simulating realistic inbox management.
 
 ---
 
-## ⚙️ Key Features
+## Environment Design
 
-### 🧩 Multi-Step Environment
-- Processes an entire inbox (not just one email)
-- Requires sequential decision-making
-- Maintains internal state across steps
+### Reward System
 
----
+| Action | Outcome | Reward |
+|--------|---------|--------|
+| Optimal action | e.g. escalate complaint on hard | +1.0 |
+| Good but suboptimal | e.g. reply instead of escalate | +0.5 |
+| Wrong action | e.g. ignore a work email | +0.3 |
+| Harmful action | e.g. reply to spam | -0.5 |
+| Ignore high priority | — | -0.7 |
+| Duplicate action | — | -0.2 |
+| Step penalty | per step | -0.02 |
+| Completion bonus | all emails processed | +0.5 |
 
-### ⚡ Priority-Aware Logic
-Each email includes an `urgency_hint`:
-- 🔴 High → Must be handled first
-- 🟡 Medium → Context-dependent
-- 🟢 Low → Can be deferred
+### Difficulty Levels
 
-Violations are penalized → encourages realistic workflows
+| Level | Emails | What it tests |
+|-------|--------|--------------|
+| `easy` | 4 | Clear signals, spam vs work |
+| `medium` | 5 | Mixed intent, moderate ambiguity |
+| `hard` | 6 | Deceptive cases, strict label-action matching |
+| `round2` | 7 | Long-horizon, dependencies, day progression, user trust |
 
----
-
-### 🎯 Intelligent Reward System (Current)
-
-| Behavior | Reward |
-|---------|--------|
-| Best action (task-dependent) | +0.3 to +0.6 |
-| Partial but acceptable action | +0.1 to +0.15 |
-| Generic/wrong decision | around -0.05 |
-| Harmful decision | -0.7 to -1.1 |
-| Step penalty (difficulty-scaled) | -0.02 to -0.08 |
-| Follow-up spawn penalty (unresolved high-priority) | -0.25 |
-| Duplicate action | -0.2 |
-| Completion bonus (difficulty-scaled) | +0.15 to +0.5 |
-
-✔ Uses **non-binary grading** to evaluate decision quality  
-✔ Rewards reasoning under ambiguity, not just correctness
-
-In `hard` and `round2`, mishandling high-priority items can create a new follow-up email in later steps, so early mistakes change the future trajectory.
+### Round2 Features
+- **Day progression** — simulated 14-day horizon, due-day penalties
+- **Dependency ordering** — must complete prerequisite emails first
+- **User trust** — degrades on bad decisions, improves on good ones
+- **World model** — tracks work vs personal action balance
+- **Feedback loop** — agent passes feedback signal for self-improvement
 
 ---
 
-### 🧠 Stateful Decision Tracking
-- Maintains history of actions
-- Prevents duplicate processing
-- Enables reasoning over past steps
+## API Endpoints
 
----
-
-### 🧩 Multi-Task Evaluation
-- Supports 4 task distributions (`easy`, `medium`, `hard`, `round2`)
-- Each task has its own grading behavior
-- Ensures agents generalize across scenarios
-
----
-
-### 🛡 Robust & Deterministic
-- Fully deterministic grading
-- No randomness in evaluation
-- Offline-compatible (no API dependency required)
-
----
-
-## 🔌 API Endpoints
-
-### 🔄 Reset Environment
+**Reset environment:**
 ```
 POST /reset?level=easy|medium|hard|round2
 ```
 
-### ▶️ Take Step
+**Take a step:**
 ```
 POST /step
 ```
-Example:
 ```json
 {
   "action_type": "reply",
   "email_id": 1,
-  "content": "Acknowledged. We are handling this now.",
+  "content": "Confirmed. I will schedule the meeting shortly.",
   "actor": "coordinator",
   "feedback": 0.0
 }
 ```
 
-### 📊 Get State
+**Get current state:**
 ```
 GET /state
 ```
 
+**Get benchmark scores:**
+```
+GET /benchmark
+```
+
 ---
 
-## 🎮 Difficulty Levels
+## OpenEnv Compliance
 
-| Level | Description |
-|------|------------|
-| Easy | Clear signals (spam vs work vs complaint) |
-| Medium | Mixed intent + moderate ambiguity |
-| Hard | Deceptive and ambiguous cases requiring judgment |
-| Round2 | Mixed work + personal long-horizon scenarios with dependencies |
+| Requirement | Status |
+|-------------|--------|
+| `reset()` endpoint | ✅ |
+| `step()` endpoint | ✅ |
+| `state()` endpoint | ✅ |
+| Typed Pydantic models | ✅ |
+| Deterministic grading | ✅ |
+| Docker support | ✅ |
+| `openenv.yaml` | ✅ |
+| Live deployment | ✅ |
 
-Run Round 2 mode:
+---
+
+## Project Structure
+
+```
+email-openenv/
+├── my_env_v4/
+│   ├── env.py        # Environment logic, reward shaping
+│   ├── grader.py     # Per-level grading functions
+│   ├── models.py     # Pydantic models
+│   └── tasks.py      # Email datasets per level
+├── server/
+│   └── app.py        # FastAPI server
+├── inference.py      # Baseline two-agent pipeline
+├── main.py           # Server entrypoint
+├── BENCHMARK.md      # Full benchmark results with per-email traces
+├── openenv.yaml      # OpenEnv spec
+└── Dockerfile
+```
+
+---
+
+## Docker
+
 ```bash
-curl -X POST "http://localhost:8000/reset?level=round2"
-python inference.py
-```
-
-Round 2 alignment implemented in code:
-- Multi-agent interaction signal via `actor`
-- Long-horizon timeline via `current_day` and due-day handling
-- World modeling via `domain`, `user_trust`, and `world_model`
-- Self-improvement hook via action `feedback` and adaptive baseline policy
-- Partial observability: internal `label` is hidden from observations
-- Consequence propagation: mishandling high-priority items can spawn follow-up emails in later steps
-
----
-
-## 🤖 Baseline Agent
-
-The baseline coordinator in `inference.py` is stateful and uses:
-- dependency-aware planning over the current inbox,
-- due-day and priority pressure from evolving state,
-- trust/feedback-aware action adaptation,
-- optional LLM action selection (`USE_LLM_POLICY=true`) with deterministic fallback.
-
-Run the baseline agent:
-```
-python baseline/run_baseline.py
-```
-
----
-
-## 🐳 Docker Setup
-
-### Build
-```
 docker build -t email-env .
+docker run -p 7860:7860 email-env
 ```
-
-### Run
-```
-docker run email-env
-```
-
----
-
-## 📁 Project Structure
-
-```
-my_env_v4/
-  env.py
-  models.py
-  tasks.py
-  grader.py
-
-inference.py
-Dockerfile
-openenv.yaml
-README.md
-```
-
----
-
-## ✅ OpenEnv Compliance
-
-✔ step(), reset(), state() implemented  
-✔ Typed models (Pydantic)  
-✔ Deterministic grading  
-✔ Dockerized execution  
-✔ openenv.yaml defined  
-
----
-
-## 🏆 Hackathon Submission Pack
-
-This repository includes the core artifacts to maximize judging score:
-
-- Training script (HF TRL, Colab-ready): `training/minimal_trl_colab.py`
-- Colab quickstart steps: `training/COLAB_QUICKSTART.md`
-- 2-minute blog/video narrative: `BLOG_VIDEO_SCRIPT_2MIN.md`
-- Winning checklist and score strategy: `HACKATHON_WINNING_CHECKLIST.md`
-
-## 🔗 Submission Links (fill before final submit)
-
-- Hugging Face Space URL: `<ADD_SPACE_URL>`
-- Mini blog or short video URL: `<ADD_BLOG_OR_VIDEO_URL>`
-
-## ✅ Minimum Requirements Checklist
-
-- [x] OpenEnv-based environment
-- [x] Working training script using HF TRL (Colab)
-- [x] Evidence of training run and metrics artifacts
-- [ ] Public Hugging Face Space link added above
-- [ ] Mini blog or <2 minute video link added above
-
-### Recommended submission flow
-
-1. Deploy app to Hugging Face Spaces (OpenEnv compliant endpoint).
-2. Run baseline metrics on `easy`, `medium`, `hard`, `round2`.
-3. Run Colab training script and export reward summary.
-4. Publish blog/video using the 2-minute script.
-5. Attach links and metrics artifact in final submission.
-
-### Reward Improvement Evidence
-
-Run:
-
-```bash
-python training/evaluate_rewards.py
-```
-
-This writes:
-
-- `training/reward_improvement.json`
-
-Current sample output in this repo shows a positive average delta between a naive baseline policy and adaptive policy.
-
-## 📈 Plots (committed artifacts)
-
-These are committed to the repository as requested in judging guidance:
-
-- Reward comparison: `assets/reward_comparison.png`
-- Training curve: `assets/training_curve.png`
-
-Regenerate plots with:
-
-```bash
-python training/generate_plots.py
-```
-
-![Reward Comparison](assets/reward_comparison.png)
-
-![Training Curve](assets/training_curve.png)
-
----
-
-## 💡 What Makes This Unique
-
-This is **NOT just classification**.
-
-It evaluates:
-- 🧠 Decision order
-- ⚡ Priority handling
-- 🔁 Multi-step reasoning
-- 📊 Workflow correctness
-- 🎭 Tests decision quality under ambiguity and conflicting signals
-
-👉 Closer to real production AI systems than academic benchmarks.
-
----
-
-## 🧪 Use Cases
-
-- AI Email Assistants
-- Customer Support Automation
-- Reinforcement Learning Environments
-- Agent Benchmarking Systems
-
----
-
-## 🔮 Future Scope
-
-- Email threading
-- Multi-agent collaboration
-- Time-based penalties
-- Real-world dataset integration
-
----
-
-## 🏁 Conclusion
-
-A **realistic, high-signal evaluation environment** for modern AI agents.
-
-Designed to test not just *what* decisions are made — but *how* and *in what order*.
-
----
-
-⭐ If you found this useful, consider starring the repo!
