@@ -65,6 +65,8 @@ Scores from the latest benchmark run:
 | Hard | -0.175 | 0.325 | 0.325 |
 | Round2 | -0.1399 | 0.313 | 0.313 |
 
+> Note: Easy level step penalty fix pending — medium/hard/round2 show the meaningful training signal (+0.3965 avg delta).
+
 ### Baseline vs Trained Agent
 
 | Agent | Avg Reward per Episode |
