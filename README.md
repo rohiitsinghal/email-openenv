@@ -31,10 +31,10 @@ Scores from the baseline agent (`inference.py`) running against the environment:
 
 | Level | Emails | Total Reward | Avg Reward/Email |
 |-------|--------|-------------|-----------------|
-| Easy | 4 | 1.92 | 0.48 |
-| Medium | 5 | 3.90 | 0.78 |
-| Hard | 6 | 5.38 | 0.90 |
-| Round2 | 7 | 7.89 | 1.13 |
+| Easy   | 5 | 3.45 | 0.69 |
+| Medium | 6 | 5.22 | 0.87 |
+| Hard   | 7 | 5.50 | 0.79 |
+| Round2 | 8 | 4.50 | 0.56 |
 
 Reward improvement over naive baseline:
 - Naive baseline avg: `1.69`

@@ -1,14 +1,24 @@
 from fastapi import FastAPI
-
 from my_env_v4.env import EmailEnv
 from my_env_v4.models import Action
 
-app = FastAPI()
+app = FastAPI(
+    title="Email Triage OpenEnv",
+    description="A multi-step decision environment for evaluating AI agents on email triage tasks.",
+    version="2.0.0"
+)
 _env = EmailEnv(task_level="easy")
+
 
 @app.get("/")
 def home():
-    return {"message": "Email OpenEnv is running"}
+    return {
+        "message": "Email OpenEnv is running",
+        "docs": "/docs",
+        "benchmark": "/benchmark",
+        "levels": ["easy", "medium", "hard", "round2"]
+    }
+
 
 @app.post("/reset")
 def reset(level: str = "easy"):
@@ -16,6 +26,7 @@ def reset(level: str = "easy"):
     _env = EmailEnv(task_level=level)
     obs = _env.reset()
     return {"emails": [e.model_dump() for e in obs.emails], "history": obs.history, "state": _env.state()}
+
 
 @app.post("/step")
 def step(action: Action):
@@ -32,16 +43,12 @@ def step(action: Action):
 def state():
     return _env.state()
 
-def main():
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=7860)
 
-if __name__ == "__main__":
-    main()
 @app.get("/benchmark")
 def benchmark():
     return {
         "environment": "Email Triage OpenEnv",
+        "version": "2.0.0",
         "levels": ["easy", "medium", "hard", "round2"],
         "baseline_agent_scores": {
             "easy": 1.92,
@@ -56,5 +63,15 @@ def benchmark():
         },
         "agent_architecture": ["triage_agent", "communication_agent", "coordinator"],
         "actions": ["reply", "ignore", "escalate"],
+        "email_fields": ["subject", "body", "priority", "domain", "sender_role", "urgency_score", "context_clue"],
         "openenv_compliant": True
     }
+
+
+def main():
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=7860)
+
+
+if __name__ == "__main__":
+    main()
