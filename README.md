@@ -12,13 +12,13 @@ pinned: false
 
 > Training LLMs to handle priority-aware, multi-step personal assistant workflows — where decisions cascade, inboxes evolve, and context matters.
 
-[![HF Space](https://img.shields.io/badge/🤗-Live%20Space-blue)](https://arushi-bassi04-email-openenv.hf.space)
+[![HF Space](https://img.shields.io/badge/🤗-Live%20Space-blue)](https://rsthepro-email-openenv.hf.space)
 [![OpenEnv Compliant](https://img.shields.io/badge/OpenEnv-Compliant-green)]()
 [![Theme](https://img.shields.io/badge/Theme-3.2%20Personalized%20Tasks-orange)]()
 
-🔗 **Live Environment:** https://arushi-bassi04-email-openenv.hf.space/docs
-📊 **Benchmark Endpoint:** https://arushi-bassi04-email-openenv.hf.space/benchmark
-📓 **Training Notebook:** <!-- ADD COLAB LINK HERE -->
+🔗 **Live Environment:** https://rsthepro-email-openenv.hf.space/docs
+📊 **Benchmark Endpoint:** https://rsthepro-email-openenv.hf.space/benchmark
+📓 **Training Notebook:** [(https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)]
 🎥 **Demo Video:** <!-- ADD YOUTUBE LINK HERE -->
 
 ---
