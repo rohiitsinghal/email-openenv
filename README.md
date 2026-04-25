@@ -4,6 +4,23 @@
 
 🔗 Live Demo: https://rsthepro-email-openenv.hf.space/docs
 
+## TL;DR For Judges
+
+- Problem: train an assistant to make correct, ordered, multi-step email decisions under ambiguity.
+- Environment: OpenEnv-compatible API with `reset`, `step`, `state` and `round2` long-horizon mode.
+- Training: Colab-ready HF TRL script at `training/minimal_trl_colab.py`.
+- Evidence: committed JSON metrics + committed PNG plots.
+- Story materials: short script at `BLOG_VIDEO_SCRIPT_2MIN.md`.
+
+## Rubric Alignment At A Glance
+
+| Judging Criterion | Weight | What This Repo Shows | Evidence |
+|---|---:|---|---|
+| Environment Innovation | 40% | Multi-agent signals, long-horizon day progression, dependencies, work+personal balancing | `my_env_v4/env.py`, `my_env_v4/tasks.py`, `openenv.yaml` |
+| Storytelling & Presentation | 30% | Problem -> Environment -> Results -> Why it matters, plus short demo script | `README.md`, `BLOG_VIDEO_SCRIPT_2MIN.md` |
+| Showing Improvement in Rewards | 20% | Baseline vs improved reward metrics + plots | `training/reward_improvement.json`, `assets/reward_comparison.png`, `assets/training_curve.png` |
+| Reward & Training Pipeline | 10% | Working TRL Colab pipeline with saved artifacts | `training/minimal_trl_colab.py`, `outputs/reward_summary.json`, `training/COLAB_QUICKSTART.md` |
+
 ---
 
 ## 🧠 Overview
@@ -42,6 +59,24 @@ From Colab TRL training run:
 
 ### Why It Matters
 This setup evaluates whether an LLM can improve in a realistic assistant workflow, not just classify isolated text snippets.
+
+### 3-Minute Reproduction (Judge Fast Path)
+
+```bash
+# local
+python main.py
+
+# in Colab (copy-paste cells from quickstart)
+!python training/evaluate_rewards.py
+!python training/minimal_trl_colab.py
+!python training/generate_plots.py
+```
+
+Expected outputs:
+- `training/reward_improvement.json`
+- `outputs/reward_summary.json`
+- `assets/reward_comparison.png`
+- `assets/training_curve.png`
 
 ---
 
@@ -109,7 +144,7 @@ Violations are penalized → encourages realistic workflows
 ---
 
 ### 🧩 Multi-Task Evaluation
-- Supports 3 distinct task distributions
+- Supports 4 task distributions (`easy`, `medium`, `hard`, `round2`)
 - Each task has its own grading behavior
 - Ensures agents generalize across scenarios
 
@@ -237,6 +272,14 @@ This repository includes the core artifacts to maximize judging score:
 
 - Hugging Face Space URL: `<ADD_SPACE_URL>`
 - Mini blog or short video URL: `<ADD_BLOG_OR_VIDEO_URL>`
+
+## ✅ Minimum Requirements Checklist
+
+- [x] OpenEnv-based environment
+- [x] Working training script using HF TRL (Colab)
+- [x] Evidence of training run and metrics artifacts
+- [ ] Public Hugging Face Space link added above
+- [ ] Mini blog or <2 minute video link added above
 
 ### Recommended submission flow
 
