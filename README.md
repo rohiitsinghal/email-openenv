@@ -122,10 +122,10 @@ python random_agent.py
 Or hit the live endpoint directly:
 ```bash
 # Reset environment
-curl -X POST "https://arushi-bassi04-email-openenv.hf.space/reset?level=hard"
+curl -X POST "https://rsthepro-email-openenv.hf.space/reset?level=hard"
 
 # Take a step
-curl -X POST "https://arushi-bassi04-email-openenv.hf.space/step" \
+curl -X POST "https://rsthepro-email-openenv.hf.space/step" \
   -H "Content-Type: application/json" \
   -d '{"action_type": "escalate", "email_id": 1, "content": "Escalating for immediate resolution.", "actor": "coordinator", "feedback": 0.0}'
 ```
@@ -198,7 +198,7 @@ The baseline agent uses a three-stage pipeline:
 name: email-triage-openenv
 version: "1.0.0"
 description: "Email triage environment for training LLMs on priority-aware personal assistant workflows"
-hf_space_url: "https://arushi-bassi04-email-openenv.hf.space"
+hf_space_url: "https://rsthepro-email-openenv.hf.space"
 theme: "3.2"
 ```
 
