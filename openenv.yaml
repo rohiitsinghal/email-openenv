@@ -1,5 +1,5 @@
 name: my_env_v4
-description: Multi-agent, long-horizon email and life-ops triage environment
+description: Partial-observability, multi-agent email triage with dependency-aware planning and consequence-driven follow-up generation
 
 observation_space:
   emails: list
@@ -17,4 +17,4 @@ action_space:
 
 reward:
   type: float
-  range: [-1.0, 1.5]
+  range: [-2.0, 1.0]

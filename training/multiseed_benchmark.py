@@ -57,9 +57,10 @@ def run_episode(level, policy_fn, seed):
 
     total = 0.0
     feedback = 0.0
-    email_count = len(env.emails) or 1
+    inbox_snapshot = list(env.emails)
+    email_count = len(inbox_snapshot) or 1
 
-    for email in env.emails:
+    for email in inbox_snapshot:
         action_type = policy_fn(email, feedback)
         result = env.step(
             Action(
