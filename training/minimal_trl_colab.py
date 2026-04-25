@@ -33,6 +33,7 @@ from my_env_v4.models import Action
 
 MODEL_NAME = "Qwen/Qwen2.5-0.5B-Instruct"
 LEVELS = ["easy", "medium", "hard", "round2"]
+TRAIN_LEVELS = ["easy", "medium", "hard", "round2", "round2", "round2"]
 SEED = 42
 
 
@@ -48,6 +49,12 @@ def heuristic_policy(email: Dict, recent_feedback: float) -> str:
     if any(word in text for word in ["offer", "click", "won", "prize", "lottery"]):
         return "ignore"
 
+    if email.get("priority") == "high":
+        return "escalate"
+
+    if email.get("due_day", 99) <= 3:
+        return "escalate"
+
     if email.get("priority") == "high" and any(word in text for word in ["urgent", "security", "failed", "escalation"]):
         return "escalate"
 
@@ -58,6 +65,7 @@ def heuristic_policy(email: Dict, recent_feedback: float) -> str:
 
 
 def to_prompt(email: Dict) -> str:
+    deps = email.get("dependency_ids", [])
     return (
         "You are an email triage assistant. Choose exactly one action: "
         "reply, ignore, or escalate.\n"
@@ -65,6 +73,8 @@ def to_prompt(email: Dict) -> str:
         f"Body: {email['body']}\n"
         f"Priority: {email['priority']}\n"
         f"Domain: {email.get('domain', 'work')}\n"
+        f"Due day: {email.get('due_day', 1)}\n"
+        f"Dependencies: {deps}\n"
         "Action:"
     )
 
@@ -82,7 +92,7 @@ def make_train_dataset(n_episodes: int = 50) -> Dataset:
     rows: List[Dict] = []
 
     for _ in range(n_episodes):
-        level = rng.choice(LEVELS)
+        level = rng.choice(TRAIN_LEVELS)
         env = EmailEnv(task_level=level)
         obs = env.reset()
         feedback = 0.0
@@ -189,7 +199,7 @@ def average_reward(results: List[EpisodeResult]) -> float:
 def main() -> None:
     random.seed(SEED)
 
-    dataset = make_train_dataset(n_episodes=60)
+    dataset = make_train_dataset(n_episodes=120)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 
@@ -209,10 +219,10 @@ def main() -> None:
             output_dir="outputs/trl_emailopenenv",
             per_device_train_batch_size=2,
             gradient_accumulation_steps=4,
-            max_steps=30,
+            max_steps=60,
             learning_rate=2e-5,
             logging_steps=5,
-            save_steps=30,
+            save_steps=60,
             bf16=False,
             fp16=False,
             report_to="none",

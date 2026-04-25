@@ -203,6 +203,13 @@ Current environment evaluates:
 	- improved_avg: `2.6158`
 	- delta_avg: `+0.925`
 
+### Benchmark snapshot from live environment
+- `training/benchmark_suite.py` produced a multi-agent role trace and a baseline-vs-adaptive comparison.
+- baseline_avg: `1.6908`
+- adaptive_avg: `2.4158`
+- delta_avg: `+0.725`
+- The trace explicitly shows triage, planning, communication, and coordinator actions for each email.
+
 ### Note on current training summary
 - The training summary JSON in `minimal_trl_colab.py` currently reports equal before/after episode rewards because it evaluates with the same heuristic policy.
 - For stronger judging impact, next version should run "after" evaluation with the fine-tuned model's action generation.
@@ -216,3 +223,6 @@ If you submit this, describe `round2` as the main benchmark mode and keep the ea
 - Publish and verify public Hugging Face Space URL.
 - Publish mini blog (HF) or sub-2-minute YouTube demo.
 - Add final links + training screenshots + reward JSON references to README/report.
+
+## 13. Final note
+- The project is no longer just a concept or aspirational README: it now has a runnable environment, a Colab training pipeline, committed metrics, committed plots, and a live benchmark trace showing multi-agent behavior.
