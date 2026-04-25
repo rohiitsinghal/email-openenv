@@ -1,0 +1,39 @@
+{
+  "before": [
+    {
+      "level": "easy",
+      "reward": -0.04
+    },
+    {
+      "level": "medium",
+      "reward": 0.44
+    },
+    {
+      "level": "hard",
+      "reward": 2.92
+    },
+    {
+      "level": "round2",
+      "reward": 7.1433
+    }
+  ],
+  "after": [
+    {
+      "level": "easy",
+      "reward": -0.04
+    },
+    {
+      "level": "medium",
+      "reward": 0.44
+    },
+    {
+      "level": "hard",
+      "reward": 2.92
+    },
+    {
+      "level": "round2",
+      "reward": 7.1433
+    }
+  ],
+  "note": "Replace eval policy with model inference for stronger before/after deltas."
+}

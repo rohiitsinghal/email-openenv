@@ -32,12 +32,13 @@ After each action, it returns:
 - done/not done status
 
 ### Tasks (question sets)
-There are 3 levels:
+There are 4 levels:
 - easy
 - medium
 - hard
+- round2
 
-Each level has different email situations.
+Each level has different email situations. `round2` is the main benchmark mode for hackathon submission.
 
 ### Grader (teacher/judge)
 This gives marks based on action quality.
@@ -74,14 +75,19 @@ Useful for:
 - AI benchmarking
 
 ## 6. Current project status (honest summary)
-The project idea and structure are strong.
-But some code paths are not fully aligned yet:
-- some docs and implementation differ
-- inference imports names not currently defined in project files
-- server is minimal and may need full environment wiring
-- missing local dependencies can block execution until installed
+The project is now integrated and runnable end-to-end.
 
-So: concept is good and useful, but final integration needs cleanup.
+Completed updates:
+- Environment and server are fully wired (`reset`, `step`, `state` working).
+- Added `round2` mode with mixed work/personal tasks, due days, dependencies, and trust/world-model tracking.
+- Baseline and inference updated to multi-agent style coordination (triage + planning + communication + coordinator).
+- Docker entrypoint and local entrypoint (`main.py`) aligned.
+- Colab training pipeline added and tested (HF TRL script + quickstart).
+- Reward-evidence scripts added and outputs generated.
+
+Current status:
+- Core implementation is ready.
+- Main pending items are submission packaging tasks (public HF Space link + mini blog/video link).
 
 ## 7. One-line explanation
 This project is a smart training-and-testing system where AI learns to handle emails like a real assistant and gets scored for decision quality.
@@ -182,7 +188,31 @@ Current environment evaluates:
 - Update policies/rules from feedback statistics and historical outcomes.
 - Re-evaluate on fixed task sets (`easy`, `medium`, `hard`, `round2`) to measure improvement.
 
-## 10. Final alignment verdict
+## 10. Training and evaluation evidence (completed)
+
+### Colab training run
+- `training/minimal_trl_colab.py` ran successfully on Colab (T4/CPU compatible).
+- Model weights downloaded, dataset formatted/tokenized, and 30 training steps completed.
+- Final reported metrics included:
+	- train loss around `0.6256`
+	- full training completion and model shard writing
+
+### Reward evidence generated
+- `training/evaluate_rewards.py` produced measurable policy delta:
+	- baseline_avg: `1.6908`
+	- improved_avg: `2.6158`
+	- delta_avg: `+0.925`
+
+### Note on current training summary
+- The training summary JSON in `minimal_trl_colab.py` currently reports equal before/after episode rewards because it evaluates with the same heuristic policy.
+- For stronger judging impact, next version should run "after" evaluation with the fine-tuned model's action generation.
+
+## 11. Final alignment verdict
 Your project now aligns with all four Round 2 themes in both design and implementation direction.
 
 If you submit this, describe `round2` as the main benchmark mode and keep the earlier levels as sanity checks.
+
+## 12. Final submission checklist (what is left)
+- Publish and verify public Hugging Face Space URL.
+- Publish mini blog (HF) or sub-2-minute YouTube demo.
+- Add final links + training screenshots + reward JSON references to README/report.
