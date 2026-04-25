@@ -35,6 +35,7 @@ def run():
 
     total_reward = 0
     recent_feedback = []
+    email_count = len(emails) or 1
 
     for email in emails:
         email_id = email["id"]
@@ -65,7 +66,7 @@ def run():
         if r.get("done"):
             break
 
-    print("Final Reward:", total_reward)
+    print("Final Reward Per Email:", round(total_reward / email_count, 4))
 
 
 if __name__ == "__main__":

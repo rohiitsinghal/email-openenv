@@ -34,6 +34,7 @@ def run_episode(level, policy):
     obs = env.reset()
     total = 0.0
     feedback = 0.0
+    email_count = len(obs.emails) or 1
 
     for email in obs.emails:
         action_type = policy(email, feedback) if policy is policy_adaptive else policy(email)
@@ -49,7 +50,7 @@ def run_episode(level, policy):
         if result.done:
             break
 
-    return round(total, 4)
+    return round(total / email_count, 4)
 
 
 def main():
@@ -62,6 +63,7 @@ def main():
         "baseline_avg": round(mean(baseline.values()), 4),
         "improved_avg": round(mean(improved.values()), 4),
         "delta_avg": round(mean(improved.values()) - mean(baseline.values()), 4),
+        "metric": "reward_per_email",
     }
 
     print(json.dumps(summary, indent=2))

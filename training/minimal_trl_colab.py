@@ -116,6 +116,7 @@ def eval_heuristic() -> List[EpisodeResult]:
         obs = env.reset()
         total_reward = 0.0
         feedback = 0.0
+        email_count = len(obs.emails) or 1
 
         for email in [e.model_dump() for e in obs.emails]:
             action_type = heuristic_policy(email, feedback)
@@ -131,7 +132,7 @@ def eval_heuristic() -> List[EpisodeResult]:
             if result.done:
                 break
 
-        results.append(EpisodeResult(level=level, reward=round(total_reward, 4)))
+        results.append(EpisodeResult(level=level, reward=round(total_reward / email_count, 4)))
 
     return results
 
@@ -145,6 +146,7 @@ def eval_model(model, tokenizer) -> List[EpisodeResult]:
         obs = env.reset()
         total_reward = 0.0
         feedback = 0.0
+        email_count = len(obs.emails) or 1
 
         for email in [e.model_dump() for e in obs.emails]:
             prompt = to_prompt(email)
@@ -175,7 +177,7 @@ def eval_model(model, tokenizer) -> List[EpisodeResult]:
             if result.done:
                 break
 
-        results.append(EpisodeResult(level=level, reward=round(total_reward, 4)))
+        results.append(EpisodeResult(level=level, reward=round(total_reward / email_count, 4)))
 
     return results
 
@@ -221,6 +223,19 @@ def main() -> None:
     trainer.train()
     trainer.save_model("outputs/trl_emailopenenv/final")
 
+    log_history = [entry for entry in trainer.state.log_history if "loss" in entry]
+    train_metrics = {
+        "steps": [int(entry["step"]) for entry in log_history],
+        "loss": [round(float(entry["loss"]), 4) for entry in log_history],
+        "mean_token_accuracy": [
+            round(float(entry.get("mean_token_accuracy", 0.0)), 4)
+            for entry in log_history
+        ],
+    }
+
+    with open("training/train_metrics.json", "w", encoding="utf-8") as f:
+        json.dump(train_metrics, f, indent=2)
+
     after_model = eval_model(trainer.model, tokenizer)
 
     before_avg = average_reward(before_model)
@@ -233,7 +248,8 @@ def main() -> None:
         "before_avg": before_avg,
         "after_avg": after_avg,
         "delta_avg": round(after_avg - before_avg, 4),
-        "note": "Primary metric is model_before_training vs model_after_training; heuristic_reference is a ceiling-style reference.",
+        "metric": "reward_per_email",
+        "note": "Primary metric is normalized reward per email; heuristic_reference is a ceiling-style reference.",
     }
 
     with open("outputs/reward_summary.json", "w", encoding="utf-8") as f:

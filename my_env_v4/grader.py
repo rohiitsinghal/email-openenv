@@ -66,23 +66,25 @@ def grade_email_hard(state, action):
 
     # --- Best actions (full reward) ---
     if label == "complaint" and act == "escalate":
-        reward = 1.0
+        reward = 0.6
     elif label == "work" and act == "reply":
-        reward = 0.8
+        reward = 0.5
     elif label == "spam" and act == "ignore":
-        reward = 0.7
+        reward = 0.4
 
     # --- Partially correct actions ---
     elif label == "complaint" and act == "reply":
-        reward = 0.5
+        reward = 0.15
     elif label == "work" and act == "ignore":
-        reward = 0.3
+        reward = 0.1
 
     # --- Wrong / harmful actions ---
     elif label == "spam" and act == "reply":
-        reward = -0.5
+        reward = -0.8
     elif act == "ignore" and priority == "high":
-        reward = -0.7
+        reward = -1.0
+    elif act in {"reply", "ignore", "escalate"}:
+        reward = -0.1
 
     return reward, True
 
@@ -96,16 +98,27 @@ def grade_email_round2(state, action, world_model):
     reward = 0.0
 
     if label == "spam" and act == "ignore":
-        reward += 0.9
+        reward += 0.45
     elif label == "complaint" and act == "escalate":
-        reward += 1.0
-    elif label == "work" and act == "reply":
-        reward += 0.8
+        reward += 0.55
+    elif label == "work" and priority == "high" and act == "escalate":
+        reward += 0.5
+    elif label == "work" and priority != "high" and act == "reply":
+        reward += 0.3
     elif act in ["reply", "ignore", "escalate"]:
-        reward += 0.2
+        reward -= 0.05
 
     if priority == "high" and act == "ignore":
-        reward -= 0.9
+        reward -= 1.1
+
+    if label == "spam" and act == "reply":
+        reward -= 0.7
+    if label == "complaint" and act == "reply":
+        reward -= 0.25
+    if label == "work" and priority == "high" and act == "reply":
+        reward -= 0.3
+    if label == "work" and act == "ignore":
+        reward -= 0.2
 
     if domain == "work":
         world_model["work_actions"] = world_model.get("work_actions", 0) + 1
@@ -114,8 +127,8 @@ def grade_email_round2(state, action, world_model):
 
     work_actions = world_model.get("work_actions", 0)
     personal_actions = world_model.get("personal_actions", 0)
-    if personal_actions > 0 and work_actions > 0:
+    if reward > 0 and personal_actions > 0 and work_actions > 0:
         ratio = min(work_actions, personal_actions) / max(work_actions, personal_actions)
-        reward += 0.2 * ratio
+        reward += 0.05 * ratio
 
     return reward, True

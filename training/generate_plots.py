@@ -14,8 +14,33 @@ def _load_json(path: Path):
         return json.load(f)
 
 
+def _load_reward_source():
+    training_summary = ROOT / "outputs" / "reward_summary.json"
+    if training_summary.exists():
+        data = _load_json(training_summary)
+        if "model_before_training" in data and "model_after_training" in data:
+            return {
+                "baseline": {item["level"]: item["reward"] for item in data["model_before_training"]},
+                "improved": {item["level"]: item["reward"] for item in data["model_after_training"]},
+            }
+        if "before" in data and "after" in data:
+            return {
+                "baseline": {item["level"]: item["reward"] for item in data["before"]},
+                "improved": {item["level"]: item["reward"] for item in data["after"]},
+            }
+
+    legacy_summary = _load_json(ROOT / "training" / "reward_improvement.json")
+    if "baseline" in legacy_summary and "improved" in legacy_summary:
+        return {
+            "baseline": legacy_summary["baseline"],
+            "improved": legacy_summary["improved"],
+        }
+
+    raise KeyError("No compatible reward summary found for plotting")
+
+
 def plot_reward_comparison():
-    data = _load_json(ROOT / "training" / "reward_improvement.json")
+    data = _load_reward_source()
 
     levels = list(data["baseline"].keys())
     baseline = [data["baseline"][lvl] for lvl in levels]
@@ -29,8 +54,8 @@ def plot_reward_comparison():
     plt.bar([i + width / 2 for i in x], improved, width=width, label="Improved")
     plt.xticks(list(x), levels)
     plt.xlabel("Task level")
-    plt.ylabel("Total reward")
-    plt.title("Baseline vs Improved Reward by Level")
+    plt.ylabel("Reward per email")
+    plt.title("Baseline vs Improved Reward per Level")
     plt.legend()
     plt.tight_layout()
     plt.savefig(ASSETS / "reward_comparison.png", dpi=180)

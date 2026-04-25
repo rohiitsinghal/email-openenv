@@ -9,6 +9,22 @@ class EmailEnv:
         self.steps = 0
         self.reset()
 
+    def _step_penalty(self):
+        return {
+            "easy": 0.02,
+            "medium": 0.03,
+            "hard": 0.05,
+            "round2": 0.08,
+        }.get(self.task_level, 0.02)
+
+    def _completion_bonus(self):
+        return {
+            "easy": 0.5,
+            "medium": 0.4,
+            "hard": 0.25,
+            "round2": 0.15,
+        }.get(self.task_level, 0.5)
+
     def reset(self):
         self.emails = load_task(self.task_level)
         self.history = []
@@ -43,7 +59,7 @@ class EmailEnv:
     def step(self, action: Action):
         reward = 0.0
         self.steps += 1
-        reward -= 0.02
+        reward -= self._step_penalty()
         info = {}
 
         email = next((e for e in self.emails if e.id == action.email_id), None)
@@ -106,11 +122,11 @@ class EmailEnv:
 
         reward += task_reward
 
-        # Encourage coordinator + specialist agent collaboration in round2.
-        if self.task_level == "round2" and action.actor in {
-            "triage_agent", "planning_agent", "communication_agent", "coordinator"
+        # Encourage specialist collaboration only after useful base actions.
+        if self.task_level == "round2" and task_reward > 0 and action.actor in {
+            "triage_agent", "planning_agent", "communication_agent"
         }:
-            reward += 0.05
+            reward += 0.02
 
         # Penalize dependency violations (e.g., confirming a call before preparing report).
         if self.task_level == "round2" and email.dependency_ids:
@@ -126,7 +142,7 @@ class EmailEnv:
         if self.task_level == "round2" and action.feedback is not None:
             self.world_model["feedback_count"] += 1
             self.world_model["feedback_sum"] += action.feedback
-            reward += 0.1 * max(-1.0, min(1.0, action.feedback))
+            reward += 0.02 * max(-1.0, min(1.0, action.feedback))
 
         # Only allow completion if either:
         # 1. This email is high priority OR
@@ -142,7 +158,7 @@ class EmailEnv:
 
         if len(self.completed) == len(self.emails):
             self.done = True
-            reward += 0.5
+            reward += self._completion_bonus()
 
         if self.task_level == "round2":
             # Advance one simulated day every two actions.
