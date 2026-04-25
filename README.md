@@ -48,33 +48,40 @@ This environment trains exactly that gap: **multi-step inbox management under pa
 
 ## Training Results
 
-### Reward Curve
+### TRL Run Snapshot
 
-<!-- ADD IMAGE HERE AFTER TRAINING -->
-<!-- ![Reward Curve](results/reward_curve.png) -->
-
-*Reward curve from GRPO training run — coming after onsite compute session.*
+- Loss trend (from training logs): `2.135 -> 0.1662`
+- Mean token accuracy trend: `61.23% -> 96.12%`
+- Final train loss (trainer report): `0.3192`
 
 ### Benchmark Scores
 
-Scores from the baseline agent (`inference.py`) running against the environment:
+Scores from the latest benchmark run:
 
-| Level | Emails | Total Reward | Avg Reward/Email |
+| Level | Model Before | Model After | Heuristic Reference |
 |---|---|---|---|
-| Easy | 5 | 3.45 | 0.69 |
-| Medium | 6 | 5.22 | 0.87 |
-| Hard | 7 | 5.50 | 0.79 |
-| Round2 | 8 | 4.50 | 0.56 |
+| Easy | -0.02 | -0.02 | -0.02 |
+| Medium | -0.03 | 0.6033 | 0.6033 |
+| Hard | -0.175 | 0.325 | 0.325 |
+| Round2 | -0.1399 | 0.313 | 0.313 |
 
 ### Baseline vs Trained Agent
 
 | Agent | Avg Reward per Episode |
 |---|---|
-| Random baseline (`random_agent.py`) | 1.69 |
-| Heuristic agent (`inference.py`) | 2.62 |
-| Trained LLM (GRPO) | <!-- ADD AFTER TRAINING --> |
+| Model before training | -0.0912 |
+| Model after training | 0.3053 |
+| Delta | +0.3965 |
 
-Delta heuristic vs random: **+0.93 (+55%)**
+### Policy Benchmark (Naive vs Improved)
+
+| Policy | Avg Reward per Episode |
+|---|---|
+| Naive baseline (`reply` only) | -0.1761 |
+| Improved policy | 0.1131 |
+| Delta | +0.2893 |
+
+Metric used in both tables: `reward_per_email`.
 
 ---
 
@@ -271,7 +278,7 @@ docker run -p 7860:7860 email-env
 
 ## Additional Materials
 
-- 📓 Training Notebook (Colab): <!-- ADD LINK -->
+- 📓 Training Notebook (Colab): [(https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)]
 - 🎥 Demo Video (YouTube): <!-- ADD LINK -->
-- 📊 HF Space: https://arushi-bassi04-email-openenv.hf.space
+- 📊 HF Space: https://rsthepro-email-openenv.hf.space
 - 💻 GitHub: https://github.com/rohiitsinghal/email-openenv
