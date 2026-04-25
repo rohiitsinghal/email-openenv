@@ -1,3 +1,13 @@
+---
+title: Email Triage OpenEnv
+emoji: ??
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # Email Triage OpenEnv
 
 A multi-step decision environment for evaluating AI agents on real-world email triage tasks.
