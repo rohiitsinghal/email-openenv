@@ -1,4 +1,4 @@
-from .models import Observation, Action, StepResult
+from .models import Observation, Action, StepResult, Email, PublicEmail
 from .tasks import load_task
 from .grader import *
 
@@ -38,18 +38,61 @@ class EmailEnv:
             "personal_actions": 0,
             "feedback_count": 0,
             "feedback_sum": 0.0,
+            "spawned_followups": [],
         }
+        return self._observation()
+
+    def _public_email(self, email: Email) -> PublicEmail:
+        return PublicEmail(
+            id=email.id,
+            subject=email.subject,
+            body=email.body,
+            priority=email.priority,
+            domain=email.domain,
+            due_day=email.due_day,
+            dependency_ids=email.dependency_ids,
+        )
+
+    def _observation(self) -> Observation:
         return Observation(
-            emails=self.emails,
-            history=[],
+            emails=[self._public_email(e) for e in self.emails],
+            history=self.history,
             current_day=self.current_day,
             user_trust=self.user_trust,
             world_model=self.world_model,
         )
 
+    def _spawn_followup_if_needed(self, email: Email, action_type: str, info: dict) -> float:
+        if self.task_level not in {"hard", "round2"}:
+            return 0.0
+        if email.priority != "high":
+            return 0.0
+        if action_type == "escalate":
+            return 0.0
+
+        spawned = self.world_model.setdefault("spawned_followups", [])
+        if email.id in spawned:
+            return 0.0
+
+        next_id = max([e.id for e in self.emails], default=0) + 1
+        followup = Email(
+            id=next_id,
+            subject=f"Follow-up required: {email.subject}",
+            body="Issue is still unresolved. Immediate escalation required.",
+            label="complaint",
+            priority="high",
+            domain=email.domain,
+            due_day=min(14, self.current_day + 1),
+            dependency_ids=[email.id],
+        )
+        self.emails.append(followup)
+        spawned.append(email.id)
+        info["follow_up_created"] = True
+        return -0.25
+
     def state(self):
         return {
-            "emails": self.emails,
+            "emails": [self._public_email(e).model_dump() for e in self.emails],
             "history": self.history,
             "current_day": self.current_day,
             "user_trust": self.user_trust,
@@ -67,13 +110,7 @@ class EmailEnv:
 
         if not email:
             return StepResult(
-                observation=Observation(
-                    emails=self.emails,
-                    history=self.history,
-                    current_day=self.current_day,
-                    user_trust=self.user_trust,
-                    world_model=self.world_model,
-                ),
+                observation=self._observation(),
                 reward=-0.2,
                 done=False,
                 info={"error": "Invalid email_id"}
@@ -82,13 +119,7 @@ class EmailEnv:
         if action.email_id in self.completed:
             reward = -0.2
             return StepResult(
-                observation=Observation(
-                    emails=self.emails,
-                    history=self.history,
-                    current_day=self.current_day,
-                    user_trust=self.user_trust,
-                    world_model=self.world_model,
-                ),
+                observation=self._observation(),
                 reward=reward,
                 done=False,
                 info={"error": "Email already processed"}
@@ -122,6 +153,9 @@ class EmailEnv:
 
         reward += task_reward
 
+        # Unresolved high-priority items spawn follow-up emails in later steps.
+        reward += self._spawn_followup_if_needed(email, action.action_type, info)
+
         # Encourage specialist collaboration only after useful base actions.
         if self.task_level == "round2" and task_reward > 0 and action.actor in {
             "triage_agent", "planning_agent", "communication_agent"
@@ -153,7 +187,7 @@ class EmailEnv:
         )
 
         # Prevent completing low-priority emails if high-priority ones exist
-        if reward > 0.5 and not (high_priority_exists and email.priority != "high"):
+        if task_reward > 0 and not (high_priority_exists and email.priority != "high"):
             self.completed.add(action.email_id)
 
         if len(self.completed) == len(self.emails):
@@ -173,13 +207,7 @@ class EmailEnv:
         self.history.append(str(action.dict()))
 
         return StepResult(
-            observation=Observation(
-                emails=self.emails,
-                history=self.history,
-                current_day=self.current_day,
-                user_trust=self.user_trust,
-                world_model=self.world_model,
-            ),
+            observation=self._observation(),
             reward=reward,
             done=self.done,
             info=info

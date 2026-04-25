@@ -46,21 +46,20 @@ def policy_priority_first(email, recent_feedback):
 
 def run_episode(level, policy_fn, seed):
     env = EmailEnv(task_level=level)
-    obs = env.reset()
+    env.reset()
 
     # Seeded inbox shuffle creates controlled variation and tests policy robustness
     # without changing grading logic.
     rng = random.Random(f"{seed}-{level}")
-    shuffled = list(obs.emails)
+    shuffled = list(env.emails)
     rng.shuffle(shuffled)
     env.emails = shuffled
-    obs.emails = shuffled
 
     total = 0.0
     feedback = 0.0
-    email_count = len(obs.emails) or 1
+    email_count = len(env.emails) or 1
 
-    for email in obs.emails:
+    for email in env.emails:
         action_type = policy_fn(email, feedback)
         result = env.step(
             Action(

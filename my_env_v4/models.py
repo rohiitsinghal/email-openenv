@@ -1,18 +1,22 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
-class Email(BaseModel):
+class PublicEmail(BaseModel):
     id: int
     subject: str
     body: str
-    label: str
     priority: str
     domain: str = "work"
     due_day: int = 1
     dependency_ids: List[int] = Field(default_factory=list)
 
+
+class Email(PublicEmail):
+    # Internal supervision signal used by the grader only.
+    label: str
+
 class Observation(BaseModel):
-    emails: List[Email]
+    emails: List[PublicEmail]
     history: List[str]
     current_day: int = 1
     user_trust: float = 1.0

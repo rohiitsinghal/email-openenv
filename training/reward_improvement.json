@@ -2,17 +2,17 @@
   "baseline": {
     "easy": -0.02,
     "medium": -0.03,
-    "hard": -0.05,
-    "round2": -0.3367
+    "hard": -0.175,
+    "round2": -0.4795
   },
   "improved": {
     "easy": -0.02,
     "medium": 0.1367,
-    "hard": 0.3625,
-    "round2": 0.1073
+    "hard": 0.3,
+    "round2": 0.0358
   },
-  "baseline_avg": -0.1092,
-  "improved_avg": 0.1466,
-  "delta_avg": 0.2558,
+  "baseline_avg": -0.1761,
+  "improved_avg": 0.1131,
+  "delta_avg": 0.2893,
   "metric": "reward_per_email"
 }
