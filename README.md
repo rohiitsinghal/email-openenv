@@ -49,12 +49,15 @@ This environment trains exactly that gap: **multi-step inbox management under pa
 Canonical SFT training evaluation — Qwen2-0.5B before and after on 826 environment trajectories:
 
 | Level | Before Training | After Training | Delta |
-|---|---|---|---|
-| Easy | -0.11 | +0.03 | +0.14 |
-| Medium | +0.0867 | +0.4367 | +0.35 |
-| Hard | -0.3643 | +0.25 | +0.6143 |
-| Round2 | -0.203 | +0.3339 | +0.5369 |
-| **Average** | **-0.147** | **+0.198** | **+0.344** |
+|-------|----------------|----------------|-------|
+| Easy   | -0.11 | +0.09  | +0.20 |
+| Medium | +0.087 | +0.487 | +0.40 |
+| Hard   | -0.364 | +0.40  | +0.764 |
+| Round2 | -0.203 | +0.341 | +0.544 |
+
+**Average reward before:** -0.147  
+**Average reward after:** +0.329  
+**Average improvement: +0.477 per email**
 
 ### Training Curves
 
