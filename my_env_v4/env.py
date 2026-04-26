@@ -35,10 +35,10 @@ class EmailEnv:
     # ------------------------------------------------------------------
 
     def _step_penalty(self) -> float:
-    return {"easy": 0.005, "medium": 0.03, "hard": 0.05, "round2": 0.08}.get(self.task_level, 0.02)
+            return {"easy": 0.005, "medium": 0.03, "hard": 0.05, "round2": 0.08}.get(self.task_level, 0.02)
 
     def _completion_bonus(self) -> float:
-    return {"easy": 1.0, "medium": 0.4, "hard": 0.3, "round2": 0.2}.get(self.task_level, 0.5)
+            return {"easy": 1.0, "medium": 0.4, "hard": 0.3, "round2": 0.2}.get(self.task_level, 0.5)
 
     # ------------------------------------------------------------------
     # Reset
