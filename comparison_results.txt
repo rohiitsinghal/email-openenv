@@ -1,0 +1,17 @@
+Random Agent Baseline (5 episodes each):
+Easy   | avg: -4.476
+Medium | avg: -4.160
+Hard   | avg: -5.550
+Round2 | avg: -5.360
+
+Smart Agent (inference.py):
+Easy   | total: +3.450
+Medium | total: +5.220
+Hard   | total: +5.500
+Round2 | total: +4.500
+
+Improvement:
+Easy   | +7.926
+Medium | +9.380
+Hard   | +11.050
+Round2 | +9.860
