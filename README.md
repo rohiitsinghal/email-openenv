@@ -3,13 +3,14 @@
 > Training LLMs to handle priority-aware, multi-step personal assistant workflows — where decisions cascade, inboxes evolve, and context matters.
 
 [![HF Space](https://img.shields.io/badge/🤗-Live%20Space-blue)](https://arushi-bassi04-email-openenv.hf.space)
-[![OpenEnv Compliant](https://img.shields.io/badge/OpenEnv-Compliant-green)]()
-[![Theme](https://img.shields.io/badge/Theme-3.2%20Personalized%20Tasks-orange)]()
+[![OpenEnv Compliant](https://img.shields.io/badge/OpenEnv-Compliant-green)](openenv.yaml)
+[![Theme](https://img.shields.io/badge/Theme-3.2%20Personalized%20Tasks-orange)](#why-this-matters)
 
 🔗 **Live Environment:** https://arushi-bassi04-email-openenv.hf.space/docs
 📊 **Benchmark Endpoint:** https://arushi-bassi04-email-openenv.hf.space/benchmark
 📓 **Training Notebook:** [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
 📝 **Short Writeup:** [Project Report](PROJECT_REPORT_NON_TECH.md)
+🎥 **Demo Video:** Add YouTube URL before final submission
 
 ---
 
@@ -45,6 +46,7 @@ This environment trains exactly that gap: **multi-step inbox management under pa
 - Reward Summary (JSON): [outputs/reward_summary.json](outputs/reward_summary.json)
 - Benchmark Report: [BENCHMARK.md](BENCHMARK.md)
 - Short Writeup: [PROJECT_REPORT_NON_TECH.md](PROJECT_REPORT_NON_TECH.md)
+- Demo Video: Add YouTube URL before final submission
 
 ---
 
@@ -292,6 +294,7 @@ docker run -p 7860:7860 email-env
 
 - 📓 Training Notebook (Colab): [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
 - 📝 Short Writeup: [PROJECT_REPORT_NON_TECH.md](PROJECT_REPORT_NON_TECH.md)
+- 🎥 Demo Video (YouTube): Add public URL before final submission
 - 🎬 Video Script (2 min): [BLOG_VIDEO_SCRIPT_2MIN.md](BLOG_VIDEO_SCRIPT_2MIN.md)
 - 🧪 Training Script: [training/minimal_trl_colab.py](training/minimal_trl_colab.py)
 - 📈 Reward Summary: [outputs/reward_summary.json](outputs/reward_summary.json)
