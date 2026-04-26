@@ -1,13 +1,3 @@
----
-title: Email Triage OpenEnv
-emoji: 📧
-colorFrom: blue
-colorTo: green
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # 📧 Email Triage OpenEnv
 
 > Training LLMs to handle priority-aware, multi-step personal assistant workflows — where decisions cascade, inboxes evolve, and context matters.
