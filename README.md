@@ -9,8 +9,7 @@
 🔗 **Live Environment:** https://arushi-bassi04-email-openenv.hf.space/docs
 📊 **Benchmark Endpoint:** https://arushi-bassi04-email-openenv.hf.space/benchmark
 📓 **Training Notebook:** [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
-📝 **Short Writeup:** [Project Report](PROJECT_REPORT_NON_TECH.md)
-🎥 **Demo Video:** Add YouTube URL before final submission
+📝 **Blog Post:** [Read Here](https://github.com/rohiitsinghal/email-openenv/blob/main/BLOG.md)
 
 ---
 
@@ -45,8 +44,7 @@ This environment trains exactly that gap: **multi-step inbox management under pa
 - Training Quickstart: [training/COLAB_QUICKSTART.md](training/COLAB_QUICKSTART.md)
 - Reward Summary (JSON): [outputs/reward_summary.json](outputs/reward_summary.json)
 - Benchmark Report: [BENCHMARK.md](BENCHMARK.md)
-- Short Writeup: [PROJECT_REPORT_NON_TECH.md](PROJECT_REPORT_NON_TECH.md)
-- Demo Video: Add YouTube URL before final submission
+- Blog Post: [BLOG.md](BLOG.md)
 
 ---
 
@@ -84,7 +82,7 @@ Canonical SFT training evaluation — Qwen2-0.5B before and after on 826 environ
 Comparison across difficulty levels shows consistent improvement from learning:
 
 | Level | Random Agent (avg) | Learned Policy | Improvement |
-|-------|-------------------|-------------|-------------|
+|-------|-------------------|----------------|-------------|
 | Easy | -4.476 | +3.450 | **+7.926** |
 | Medium | -4.160 | +5.220 | **+9.380** |
 | Hard | -5.550 | +5.500 | **+11.050** |
@@ -267,15 +265,15 @@ email-openenv/
 ├── server/
 │   └── app.py          # FastAPI server
 ├── outputs/
-│   ├── reward_curve.png  # Training reward curve
-│   ├── reward_comp.png   # Reward comparison plot
+│   ├── reward_curve.png
+│   ├── reward_comp.png
 │   └── reward_summary.json
-├── inference.py        # Baseline two-agent pipeline
+├── inference.py        # Baseline three-stage pipeline
 ├── random_agent.py     # Random baseline for comparison
 ├── main.py             # Server entrypoint
 ├── openenv.yaml        # OpenEnv manifest
-├── pyproject.toml      # Makes Space pip-installable
-├── BENCHMARK.md        # Full benchmark results with per-email traces
+├── BLOG.md             # Full project blog post
+├── BENCHMARK.md        # Benchmark results with per-email traces
 └── Dockerfile
 ```
 
@@ -292,10 +290,9 @@ docker run -p 7860:7860 email-env
 
 ## Additional Materials
 
-- 📓 Training Notebook (Colab): [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
-- 📝 Short Writeup: [PROJECT_REPORT_NON_TECH.md](PROJECT_REPORT_NON_TECH.md)
-- 🎥 Demo Video (YouTube): Add public URL before final submission
-- 🎬 Video Script (2 min): [BLOG_VIDEO_SCRIPT_2MIN.md](BLOG_VIDEO_SCRIPT_2MIN.md)
+- 📓 Training Notebook: [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
+- 📝 Blog Post: [BLOG.md](BLOG.md)
+- 📝 Non-Tech Report: [PROJECT_REPORT_NON_TECH.md](PROJECT_REPORT_NON_TECH.md)
 - 🧪 Training Script: [training/minimal_trl_colab.py](training/minimal_trl_colab.py)
 - 📈 Reward Summary: [outputs/reward_summary.json](outputs/reward_summary.json)
 - 📊 HF Space: https://arushi-bassi04-email-openenv.hf.space
