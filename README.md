@@ -10,7 +10,6 @@
 📊 **Benchmark Endpoint:** https://arushi-bassi04-email-openenv.hf.space/benchmark
 📓 **Training Notebook:** [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
 🎥 **Demo Video:** <!-- ADD YOUTUBE LINK HERE -->
->>>>>>> 3f9d43a (fix HF space links, clean README)
 
 ---
 
@@ -65,6 +64,12 @@ Scores from the latest benchmark run:
 | Model before training | -0.0912 |
 | Model after training | 0.3053 |
 | Delta | +0.3965 |
+
+### Training Curves
+
+![Training Progress](outputs/training_curve.png)
+
+![Reward Comparison: Before vs After Training](outputs/reward_comparison.png)
 
 ### Policy Benchmark (Naive vs Improved)
 
