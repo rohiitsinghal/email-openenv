@@ -12,14 +12,14 @@ pinned: false
 
 > Training LLMs to handle priority-aware, multi-step personal assistant workflows — where decisions cascade, inboxes evolve, and context matters.
 
-[![HF Space](https://img.shields.io/badge/🤗-Live%20Space-blue)](https://rsthepro-email-openenv.hf.space)
+[![HF Space](https://img.shields.io/badge/🤗-Live%20Space-blue)](https://arushi-bassi04-email-openenv.hf.space)
 [![OpenEnv Compliant](https://img.shields.io/badge/OpenEnv-Compliant-green)]()
 [![Theme](https://img.shields.io/badge/Theme-3.2%20Personalized%20Tasks-orange)]()
 
-🔗 **Live Environment:** https://rsthepro-email-openenv.hf.space/docs
-📊 **Benchmark Endpoint:** https://rsthepro-email-openenv.hf.space/benchmark
-📓 **Training Notebook:** [(https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)]
-🎥 **Demo Video:** 
+🔗 **Live Environment:** https://arushi-bassi04-email-openenv.hf.space/docs
+📊 **Benchmark Endpoint:** https://arushi-bassi04-email-openenv.hf.space/benchmark
+📓 **Training Notebook:** [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
+🎥 **Demo Video:** <!-- ADD YOUTUBE LINK HERE -->
 
 ---
 
@@ -124,10 +124,10 @@ python random_agent.py
 Or hit the live endpoint directly:
 ```bash
 # Reset environment
-curl -X POST "https://rsthepro-email-openenv.hf.space/reset?level=hard"
+curl -X POST "https://arushi-bassi04-email-openenv.hf.space/reset?level=hard"
 
 # Take a step
-curl -X POST "https://rsthepro-email-openenv.hf.space/step" \
+curl -X POST "https://arushi-bassi04-email-openenv.hf.space/step" \
   -H "Content-Type: application/json" \
   -d '{"action_type": "escalate", "email_id": 1, "content": "Escalating for immediate resolution.", "actor": "coordinator", "feedback": 0.0}'
 ```
@@ -200,7 +200,7 @@ The baseline agent uses a three-stage pipeline:
 name: email-triage-openenv
 version: "1.0.0"
 description: "Email triage environment for training LLMs on priority-aware personal assistant workflows"
-hf_space_url: "https://rsthepro-email-openenv.hf.space"
+hf_space_url: "https://arushi-bassi04-email-openenv.hf.space"
 theme: "3.2"
 ```
 
@@ -280,7 +280,7 @@ docker run -p 7860:7860 email-env
 
 ## Additional Materials
 
-- 📓 Training Notebook (Colab): [(https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)]
-- 🎥 Demo Video (YouTube): 
-- 📊 HF Space: https://rsthepro-email-openenv.hf.space
+- 📓 Training Notebook (Colab): [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
+- 🎥 Demo Video (YouTube): <!-- ADD LINK -->
+- 📊 HF Space: https://arushi-bassi04-email-openenv.hf.space
 - 💻 GitHub: https://github.com/rohiitsinghal/email-openenv
