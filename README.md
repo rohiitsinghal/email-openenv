@@ -9,7 +9,7 @@
 🔗 **Live Environment:** https://arushi-bassi04-email-openenv.hf.space/docs
 📊 **Benchmark Endpoint:** https://arushi-bassi04-email-openenv.hf.space/benchmark
 📓 **Training Notebook:** [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
-🎥 **Demo Video:** <!-- ADD YOUTUBE LINK HERE -->
+📝 **Short Writeup:** [Project Report](PROJECT_REPORT_NON_TECH.md)
 
 ---
 
@@ -33,6 +33,18 @@ This environment trains exactly that gap: **multi-step inbox management under pa
 | Docker support | ✅ |
 | `openenv.yaml` manifest | ✅ |
 | Live HF Space deployment | ✅ |
+
+## Judge Quick Links
+
+- Environment (HF Space): https://arushi-bassi04-email-openenv.hf.space
+- API Docs: https://arushi-bassi04-email-openenv.hf.space/docs
+- Benchmark Endpoint: https://arushi-bassi04-email-openenv.hf.space/benchmark
+- Training Notebook: [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
+- Training Script: [training/minimal_trl_colab.py](training/minimal_trl_colab.py)
+- Training Quickstart: [training/COLAB_QUICKSTART.md](training/COLAB_QUICKSTART.md)
+- Reward Summary (JSON): [outputs/reward_summary.json](outputs/reward_summary.json)
+- Benchmark Report: [BENCHMARK.md](BENCHMARK.md)
+- Short Writeup: [PROJECT_REPORT_NON_TECH.md](PROJECT_REPORT_NON_TECH.md)
 
 ---
 
@@ -61,9 +73,9 @@ Canonical SFT training evaluation — Qwen2-0.5B before and after on 826 environ
 
 ### Training Curves
 
-![Training Progress](outputs/training_curve.png)
+![Training Progress](outputs/reward_curve.png)
 
-![Reward Comparison: Before vs After Training](outputs/reward_comparison.png)
+![Reward Comparison: Before vs After Training](outputs/reward_comp.png)
 
 ## Validation: Random vs Learned Policy Baseline
 
@@ -252,8 +264,10 @@ email-openenv/
 │   └── tasks.py        # Email datasets per level
 ├── server/
 │   └── app.py          # FastAPI server
-├── results/
-│   └── reward_curve.png  # Training reward curve (added post training)
+├── outputs/
+│   ├── reward_curve.png  # Training reward curve
+│   ├── reward_comp.png   # Reward comparison plot
+│   └── reward_summary.json
 ├── inference.py        # Baseline two-agent pipeline
 ├── random_agent.py     # Random baseline for comparison
 ├── main.py             # Server entrypoint
@@ -277,6 +291,9 @@ docker run -p 7860:7860 email-env
 ## Additional Materials
 
 - 📓 Training Notebook (Colab): [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
-- 🎥 Demo Video (YouTube): <!-- ADD LINK -->
+- 📝 Short Writeup: [PROJECT_REPORT_NON_TECH.md](PROJECT_REPORT_NON_TECH.md)
+- 🎬 Video Script (2 min): [BLOG_VIDEO_SCRIPT_2MIN.md](BLOG_VIDEO_SCRIPT_2MIN.md)
+- 🧪 Training Script: [training/minimal_trl_colab.py](training/minimal_trl_colab.py)
+- 📈 Reward Summary: [outputs/reward_summary.json](outputs/reward_summary.json)
 - 📊 HF Space: https://arushi-bassi04-email-openenv.hf.space
 - 💻 GitHub: https://github.com/rohiitsinghal/email-openenv
