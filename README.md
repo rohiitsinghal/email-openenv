@@ -76,6 +76,22 @@ Scores from the latest benchmark run:
 
 Metric used in both tables: `reward_per_email`.
 
+## Agent Comparison: Random vs Smart Baseline
+
+The clearest evidence of improvement — a random agent vs our trained heuristic agent across all difficulty levels:
+
+| Level | Random Agent (avg) | Smart Agent | Improvement |
+|-------|-------------------|-------------|-------------|
+| Easy | -4.476 | +3.450 | **+7.926** |
+| Medium | -4.160 | +5.220 | **+9.380** |
+| Hard | -5.550 | +5.500 | **+11.050** |
+| Round2 | -5.360 | +4.500 | **+9.860** |
+
+Random agent picks `reply`, `ignore`, `escalate` randomly with generic content.
+Smart agent uses priority-aware triage, semantic action selection, and context-rich replies.
+
+**Average improvement across all levels: +9.55 reward points per episode.**
+
 ---
 
 ## What This Environment Tests
