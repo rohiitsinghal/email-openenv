@@ -67,9 +67,9 @@ Scores from the latest benchmark run:
 
 ### Training Curves
 
-![Training Progress](outputs/training_curve.png)
+![Training Progress](outputs/reward_curve.png)
 
-![Reward Comparison: Before vs After Training](outputs/reward_comparison.png)
+![Reward Comparison: Before vs After Training](outputs/reward_comp.png)
 
 ### Policy Benchmark (Naive vs Improved)
 
