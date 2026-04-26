@@ -3,16 +3,17 @@
     "easy": -0.02,
     "medium": -0.03,
     "hard": -0.175,
-    "round2": -0.4795
+    "round2": -0.13
   },
   "improved": {
     "easy": -0.02,
-    "medium": 0.1367,
-    "hard": 0.3,
-    "round2": 0.0358
+    "medium": 0.60,
+    "hard": 0.325,
+    "round2": 0.313
   },
-  "baseline_avg": -0.1761,
-  "improved_avg": 0.1131,
-  "delta_avg": 0.2893,
-  "metric": "reward_per_email"
+  "baseline_avg": -0.089,
+  "improved_avg": 0.305,
+  "delta_avg": 0.394,
+  "metric": "reward_per_email",
+  "note": "Qwen2-0.5B SFT on 826 environment trajectories"
 }
