@@ -6,12 +6,6 @@
 [![OpenEnv Compliant](https://img.shields.io/badge/OpenEnv-Compliant-green)]()
 [![Theme](https://img.shields.io/badge/Theme-3.2%20Personalized%20Tasks-orange)]()
 
-<<<<<<< HEAD
-🔗 **Live Environment:** https://rsthepro-email-openenv.hf.space/docs
-📊 **Benchmark Endpoint:** https://rsthepro-email-openenv.hf.space/benchmark
-📓 **Training Notebook:** [(https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)]
-🎥 **Demo Video:** 
-=======
 🔗 **Live Environment:** https://arushi-bassi04-email-openenv.hf.space/docs
 📊 **Benchmark Endpoint:** https://arushi-bassi04-email-openenv.hf.space/benchmark
 📓 **Training Notebook:** [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
@@ -277,13 +271,7 @@ docker run -p 7860:7860 email-env
 
 ## Additional Materials
 
-<<<<<<< HEAD
-- 📓 Training Notebook (Colab): [(https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)]
-- 🎥 Demo Video (YouTube): 
-- 📊 HF Space: https://rsthepro-email-openenv.hf.space
-=======
 - 📓 Training Notebook (Colab): [Open in Colab](https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)
 - 🎥 Demo Video (YouTube): <!-- ADD LINK -->
 - 📊 HF Space: https://arushi-bassi04-email-openenv.hf.space
->>>>>>> 3f9d43a (fix HF space links, clean README)
 - 💻 GitHub: https://github.com/rohiitsinghal/email-openenv
