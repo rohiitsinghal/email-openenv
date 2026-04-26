@@ -1,5 +1,5 @@
 name: email-triage-openenv
 version: "1.0.0"
 description: "Email triage environment for training LLMs on priority-aware personal assistant workflows"
-hf_space_url: "https://rsthepro-email-openenv.hf.space"
+hf_space_url: "https://arushi-bassi04-email-openenv.hf.space"
 theme: "3.2"

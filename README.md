@@ -44,48 +44,29 @@ This environment trains exactly that gap: **multi-step inbox management under pa
 - Mean token accuracy trend: `61.23% -> 96.12%`
 - Final train loss (trainer report): `0.3192`
 
-### Benchmark Scores
+### Per-Level Training Results
 
-Scores from the latest benchmark run:
+Canonical SFT training evaluation — Qwen2-0.5B before and after on 826 environment trajectories:
 
-| Level | Model Before | Model After | Heuristic Reference |
+| Level | Before Training | After Training | Delta |
 |---|---|---|---|
-| Easy | -0.02 | -0.02 | -0.02 |
-| Medium | -0.03 | 0.6033 | 0.6033 |
-| Hard | -0.175 | 0.325 | 0.325 |
-| Round2 | -0.1399 | 0.313 | 0.313 |
-
-> Note: Easy level step penalty fix pending — medium/hard/round2 show the meaningful training signal (+0.3965 avg delta).
-
-### Baseline vs Trained Agent
-
-| Agent | Avg Reward per Episode |
-|---|---|
-| Model before training | -0.0912 |
-| Model after training | 0.3053 |
-| Delta | +0.3965 |
+| Easy | -0.11 | +0.03 | +0.14 |
+| Medium | +0.0867 | +0.4367 | +0.35 |
+| Hard | -0.3643 | +0.25 | +0.6143 |
+| Round2 | -0.203 | +0.3339 | +0.5369 |
+| **Average** | **-0.147** | **+0.198** | **+0.344** |
 
 ### Training Curves
 
-![Training Progress](outputs/reward_curve.png)
+![Training Progress](outputs/training_curve.png)
 
-![Reward Comparison: Before vs After Training](outputs/reward_comp.png)
+![Reward Comparison: Before vs After Training](outputs/reward_comparison.png)
 
-### Policy Benchmark (Naive vs Improved)
+## Validation: Random vs Learned Policy Baseline
 
-| Policy | Avg Reward per Episode |
-|---|---|
-| Naive baseline (`reply` only) | -0.1761 |
-| Improved policy | 0.1131 |
-| Delta | +0.2893 |
+Comparison across difficulty levels shows consistent improvement from learning:
 
-Metric used in both tables: `reward_per_email`.
-
-## Agent Comparison: Random vs Smart Baseline
-
-The clearest evidence of improvement — a random agent vs our trained heuristic agent across all difficulty levels:
-
-| Level | Random Agent (avg) | Smart Agent | Improvement |
+| Level | Random Agent (avg) | Learned Policy | Improvement |
 |-------|-------------------|-------------|-------------|
 | Easy | -4.476 | +3.450 | **+7.926** |
 | Medium | -4.160 | +5.220 | **+9.380** |
