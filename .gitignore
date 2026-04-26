@@ -1,6 +1,20 @@
 .DS_Store
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 .env
+.env.*
 *.egg-info/
 dist/
+
+# Virtual environments
+.venv/
+venv/
+
+# Test and type-check caches
+.pytest_cache/
+.mypy_cache/
+
+# Notebook artifacts
+.ipynb_checkpoints/

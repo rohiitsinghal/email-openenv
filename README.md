@@ -19,7 +19,7 @@ pinned: false
 🔗 **Live Environment:** https://rsthepro-email-openenv.hf.space/docs
 📊 **Benchmark Endpoint:** https://rsthepro-email-openenv.hf.space/benchmark
 📓 **Training Notebook:** [(https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)]
-🎥 **Demo Video:** <!-- ADD YOUTUBE LINK HERE -->
+🎥 **Demo Video:** 
 
 ---
 
@@ -281,6 +281,6 @@ docker run -p 7860:7860 email-env
 ## Additional Materials
 
 - 📓 Training Notebook (Colab): [(https://colab.research.google.com/drive/1hfHmku08OfkeHoEUBEbJxj3TaxVQoyJp?usp=sharing)]
-- 🎥 Demo Video (YouTube): <!-- ADD LINK -->
+- 🎥 Demo Video (YouTube): 
 - 📊 HF Space: https://rsthepro-email-openenv.hf.space
 - 💻 GitHub: https://github.com/rohiitsinghal/email-openenv
