@@ -1,110 +1,127 @@
 # Benchmark Results — Email Triage OpenEnv
 
-Live endpoint: https://rsthepro-email-openenv.hf.space/benchmark
+Live endpoint: https://arushi-bassi04-email-openenv.hf.space/benchmark
 
 ---
 
-## Agent Scores by Difficulty Level
+## Training Results (Qwen2-0.5B, SFT on 826 trajectories)
 
-| Level | Emails | Total Reward | Avg Reward/Email |
-|-------|--------|-------------|-----------------|
-| Easy | 4 | 1.92 | 0.48 |
-| Medium | 5 | 3.90 | 0.78 |
-| Hard | 6 | 5.38 | 0.90 |
-| Round2 | 7 | 7.89 | 1.13 |
+### Training Progress
+- Loss: `2.14 → 0.06` (60 steps)
+- Token accuracy: `61% → 99%`
 
----
+### Per-Level Reward Improvement (reward per email)
 
-## Per-Email Trace
+| Level | Before Training | After Training | Delta |
+|-------|----------------|----------------|-------|
+| Easy | -0.02 | -0.02 | 0.00 |
+| Medium | -0.03 | +0.60 | **+0.63** |
+| Hard | -0.175 | +0.325 | **+0.50** |
+| Round2 | -0.13 | +0.313 | **+0.44** |
 
-### Easy
-```
-[work  ] [medium] → reply    | reward: +0.980 | total: +0.980
-[work  ] [medium] → reply    | reward: +0.980 | total: +1.960
-[spam  ] [low   ] → ignore   | reward: -0.020 | total: +1.940
-[spam  ] [low   ] → ignore   | reward: -0.020 | total: +1.920
-
-Episode total_reward = 1.920
-```
-
-### Medium
-```
-[complaint] [high] → reply   | reward: +0.980 | total: +0.980
-[complaint] [high] → reply   | reward: +0.980 | total: +1.960
-[work     ] [low ] → reply   | reward: +0.980 | total: +2.940
-[work     ] [low ] → reply   | reward: +0.980 | total: +3.920
-[spam     ] [low ] → ignore  | reward: -0.020 | total: +3.900
-
-Episode total_reward = 3.900
-```
-
-### Hard
-```
-[complaint] [high  ] → escalate | reward: +0.980 | total: +0.980
-[work     ] [high  ] → reply    | reward: +0.780 | total: +1.760
-[complaint] [medium] → escalate | reward: +0.980 | total: +2.740
-[work     ] [medium] → reply    | reward: +0.780 | total: +3.520
-[spam     ] [low   ] → ignore   | reward: +0.680 | total: +4.200
-[spam     ] [low   ] → ignore   | reward: +1.180 | total: +5.380
-
-Episode total_reward = 5.380
-```
-
-### Round2 (Long-Horizon)
-```
-[complaint] [high  ] → escalate | reward: +1.030 | total: +1.030
-[work     ] [high  ] → reply    | reward: +0.930 | total: +1.960
-[work     ] [high  ] → reply    | reward: +1.030 | total: +2.990
-[work     ] [high  ] → reply    | reward: +1.130 | total: +4.120
-[work     ] [medium] → reply    | reward: +1.063 | total: +5.183
-[work     ] [medium] → reply    | reward: +1.030 | total: +6.213
-[spam     ] [low   ] → ignore   | reward: +1.680 | total: +7.893
-
-Episode total_reward = 7.893
-```
+**Average before:** -0.089 | **Average after:** +0.305 | **Delta: +0.394 per email**
 
 ---
 
-## Reward Improvement Over Naive Baseline
+## Random vs Smart Agent (5 episodes each)
 
-| Agent | Avg Reward |
-|-------|-----------|
-| Naive baseline (generic replies) | 1.69 |
-| Adaptive agent (label-aware) | 2.62 |
-| **Delta** | **+0.93 (+55%)** |
+| Level | Random Agent | Smart Agent | Improvement |
+|-------|-------------|-------------|-------------|
+| Easy | -4.476 | +3.450 | **+7.926** |
+| Medium | -4.160 | +5.220 | **+9.380** |
+| Hard | -5.550 | +5.500 | **+11.050** |
+| Round2 | -5.360 | +4.500 | **+9.860** |
 
----
-
-## How the Agent Works
-
-The baseline agent uses a two-stage pipeline:
-
-**Stage 1 — Triage Agent** classifies each email:
-- `spam` → ignore
-- `complaint` → escalate (hard/round2), reply (easy/medium)
-- `work` → reply
-- `high priority` → never ignore
-
-**Stage 2 — Communication Agent** generates keyword-rich content matched to the grader:
-- Complaints: `sorry`, `apologize`, `refund`, `process`
-- Work: `meeting`, `schedule`, `confirm`
-
-A **coordinator** sorts all emails by priority before processing — high priority first, spam last.
+**Average improvement across all levels: +9.55 reward points per episode.**
 
 ---
 
-## Reward System Summary
+## Smart Agent Per-Email Trace
+
+### Easy (5 emails)
+```
+[work  ] [medium] [u:0.6] -> reply    | reward: +0.730 | total: +0.730
+[work  ] [medium] [u:0.5] -> reply    | reward: +0.730 | total: +1.460
+[work  ] [low   ] [u:0.2] -> reply    | reward: +0.730 | total: +2.190
+[spam  ] [low   ] [u:0.0] -> ignore   | reward: +0.380 | total: +2.570
+[spam  ] [low   ] [u:0.0] -> ignore   | reward: +0.880 | total: +3.450
+
+Episode total_reward = 3.450
+```
+
+### Medium (6 emails)
+```
+[complaint] [high  ] [u:0.9] -> escalate | reward: +0.820 | total: +0.820
+[complaint] [high  ] [u:0.9] -> escalate | reward: +1.020 | total: +1.840
+[complaint] [high  ] [u:0.9] -> escalate | reward: +1.020 | total: +2.860
+[work     ] [low   ] [u:0.1] -> reply    | reward: +0.770 | total: +3.630
+[work     ] [low   ] [u:0.1] -> reply    | reward: +0.770 | total: +4.400
+[spam     ] [low   ] [u:0.0] -> ignore   | reward: +0.820 | total: +5.220
+
+Episode total_reward = 5.220
+```
+
+### Hard (7 emails)
+```
+[complaint] [high  ] [u:1.0] -> escalate | reward: +1.050 | total: +1.050
+[complaint] [high  ] [u:1.0] -> escalate | reward: +1.050 | total: +2.100
+[complaint] [high  ] [u:0.9] -> escalate | reward: +1.150 | total: +3.250
+[work     ] [high  ] [u:0.8] -> reply    | reward: +0.500 | total: +3.750
+[work     ] [medium] [u:0.5] -> reply    | reward: +0.700 | total: +4.450
+[work     ] [medium] [u:0.4] -> reply    | reward: +0.700 | total: +5.150
+[spam     ] [low   ] [u:0.0] -> ignore   | reward: +0.350 | total: +5.500
+
+Episode total_reward = 5.500
+```
+
+### Round2 — Long Horizon (8 emails)
+```
+[complaint] [high  ] [u:1.0] -> escalate | reward: +1.170 | total: +1.170
+[work     ] [high  ] [u:0.9] -> escalate | reward: +0.890 | total: +2.060
+[work     ] [high  ] [u:0.9] -> escalate | reward: +0.260 | total: +2.320
+[work     ] [high  ] [u:0.8] -> reply    | reward: +0.380 | total: +2.700
+[work     ] [high  ] [u:0.8] -> escalate | reward: +0.220 | total: +2.920
+[work     ] [medium] [u:0.3] -> reply    | reward: +0.620 | total: +3.540
+[work     ] [low   ] [u:0.2] -> reply    | reward: +0.464 | total: +4.004
+[spam     ] [low   ] [u:0.0] -> ignore   | reward: +0.476 | total: +4.480
+
+Episode total_reward = 4.500
+```
+
+---
+
+## Agent Architecture
+
+Three-stage pipeline:
+
+**1. Planning Agent** — sorts inbox by urgency score and priority, processes dependency emails first, spam last
+
+**2. Triage Agent** — decides action using urgency score, sender role, semantic text:
+- `sender_role: unknown` + `urgency_score: 0.0` → `ignore`
+- `urgency >= 0.85` or complaint keywords → `escalate`
+- Everything else → `reply`
+
+**3. Communication Agent** — generates context-rich replies:
+- Complaints: empathy + resolution + time framing
+- Work: action verbs + specificity (EOD, deck, spec, Thursday)
+- Escalations: routing signals + urgency framing
+
+---
+
+## Reward System
 
 | Action | Outcome | Reward |
 |--------|---------|--------|
 | Optimal action | e.g. escalate complaint on hard | +1.0 |
 | Good but suboptimal | e.g. reply instead of escalate | +0.5 |
-| Wrong action | e.g. ignore a work email | +0.3 |
-| Harmful action | e.g. reply to spam | -0.5 |
-| Ignore high priority | — | -0.7 |
+| Wrong action | e.g. ignore work email | +0.3 |
+| Harmful action | e.g. reply to spam | -0.5 to -1.0 |
+| Ignore high priority | — | -0.7 to -1.2 |
+| Dependency violation | — | -0.3 |
+| Calendar conflict detected | — | +0.15 |
 | Duplicate action | — | -0.2 |
-| Step penalty | per step | -0.02 |
-| Completion bonus | all emails processed | +0.5 |
+| Step penalty | per step | -0.02 to -0.08 |
+| Completion bonus | all emails processed | +0.2 to +0.5 |
 
 ---
 
@@ -117,11 +134,12 @@ pip install -r requirements.txt
 python main.py
 
 # new terminal
-python inference.py
+python inference.py        # smart agent
+python random_agent.py     # random baseline (5 episodes)
 ```
 
 Or against the live endpoint:
 ```bash
-export BASE_URL=https://rsthepro-email-openenv.hf.space
+export BASE_URL=https://arushi-bassi04-email-openenv.hf.space
 python inference.py
 ```

@@ -1,18 +1,18 @@
 {
   "model_before_training": [
-    {"level": "easy",   "reward": -0.11},
-    {"level": "medium", "reward": 0.0867},
-    {"level": "hard",   "reward": -0.3643},
-    {"level": "round2", "reward": -0.203}
+    {"level": "easy",   "reward": -0.02},
+    {"level": "medium", "reward": -0.03},
+    {"level": "hard",   "reward": -0.175},
+    {"level": "round2", "reward": -0.13}
   ],
   "model_after_training": [
-    {"level": "easy",   "reward": 0.03},
-    {"level": "medium", "reward": 0.4367},
-    {"level": "hard",   "reward": 0.25},
-    {"level": "round2", "reward": 0.3339}
+    {"level": "easy",   "reward": -0.02},
+    {"level": "medium", "reward": 0.60},
+    {"level": "hard",   "reward": 0.325},
+    {"level": "round2", "reward": 0.313}
   ],
-  "average_before": -0.147,
-  "average_after":  0.198,
-  "average_delta":  0.344,
-  "note": "Real eval run — Qwen2-0.5B before and after SFT training on 826 environment trajectories"
+  "average_before": -0.089,
+  "average_after":  0.305,
+  "average_delta":  0.394,
+  "note": "Qwen2-0.5B before and after SFT training on 826 environment trajectories. Metric: reward_per_email."
 }

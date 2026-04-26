@@ -81,12 +81,11 @@ The random agent scores deeply negative because it replies to spam, ignores high
 
 ### Training Results (HuggingFace TRL)
 
-- Loss trend: `2.135 → 0.1662`
-- Token accuracy: `61.23% → 96.12%`
-- Final train loss: `0.3192`
-- Avg reward before training: `-0.0912`
-- Avg reward after training: `+0.3053`
-- Delta: **+0.3965**
+- Loss trend: `2.14 → 0.06`
+- Token accuracy: `61% → 99%`
+- Avg reward before training: `-0.089`
+- Avg reward after training: `+0.305`
+- Delta: **+0.394**
 
 ---
 

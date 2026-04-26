@@ -52,9 +52,10 @@ This environment trains exactly that gap: **multi-step inbox management under pa
 
 ### TRL Run Snapshot
 
-- Loss trend (from training logs): `2.135 -> 0.1662`
-- Mean token accuracy trend: `61.23% -> 96.12%`
-- Final train loss (trainer report): `0.3192`
+### TRL Run Snapshot
+
+- Loss trend (from training logs): `2.14 -> 0.06`
+- Mean token accuracy trend: `61% -> 99%`
 
 ### Per-Level Training Results
 
@@ -62,14 +63,14 @@ Canonical SFT training evaluation — Qwen2-0.5B before and after on 826 environ
 
 | Level | Before Training | After Training | Delta |
 |-------|----------------|----------------|-------|
-| Easy   | -0.11 | +0.09  | +0.20 |
-| Medium | +0.087 | +0.487 | +0.40 |
-| Hard   | -0.364 | +0.40  | +0.764 |
-| Round2 | -0.203 | +0.341 | +0.544 |
+| Easy   | -0.02  | -0.02  | 0.00  |
+| Medium | -0.03  | +0.60  | +0.63 |
+| Hard   | -0.175 | +0.325 | +0.50 |
+| Round2 | -0.13  | +0.313 | +0.44 |
 
-**Average reward before:** -0.147  
-**Average reward after:** +0.329  
-**Average improvement: +0.477 per email**
+**Average reward before:** -0.089
+**Average reward after:** +0.305
+**Average improvement: +0.394 per email**
 
 ### Training Curves
 
